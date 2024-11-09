@@ -2,7 +2,7 @@
 
 ## Database Schema Design
 
-[Kikeys-database-schema]: 
+[kk-db-schema]: ./images/db_design.jpeg
 
 ## API Documentation
 
