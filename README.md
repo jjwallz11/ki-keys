@@ -277,7 +277,8 @@ Returns all the vehicles.
           "createdAt": "2021-11-19 20:39:36",
           "updatedAt": "2021-11-19 20:39:36",
           "previewImage": "image url", // maybe of VIN?
-          "keyImage": "image url"
+          "keyImage": "image url",
+          "status": "status", // "active", "locked", "awaiting key", etc.
         }
       ]
     }
@@ -316,7 +317,8 @@ Returns all the vehicles owned (created) by the current user.
           "createdAt": "2021-11-19 20:39:36",
           "updatedAt": "2021-11-19 20:39:36",
           "previewImage": "image url", // maybe of VIN?
-          "keyImage": "image url"
+          "keyImage": "image url",
+          "status": "status", // "active", "locked", "awaiting key", etc.
         }
       ]
     }
@@ -355,7 +357,8 @@ Returns the details of a vehicle specified by its VIN or Id.
           "createdAt": "2021-11-19 20:39:36",
           "updatedAt": "2021-11-19 20:39:36",
           "previewImage": "image url", // maybe of VIN?
-          "keyImage": "image url"
+          "keyImage": "image url",
+          "status": "status", // "active", "locked", "awaiting key", etc.
         }
       ],
       "VehicleImages": [
@@ -417,7 +420,8 @@ Adds and returns a new vehicle.
       "createdAt": "2021-11-19 20:39:36",
       "updatedAt": "2021-11-19 20:39:36",
       "previewImage": "image url", // maybe of VIN?
-      "keyImage": "image url"
+      "keyImage": "image url",
+      "status": "status", // "active", "locked", "awaiting key", etc.
     }
     ```
 
@@ -437,7 +441,8 @@ Adds and returns a new vehicle.
       "model": "Sierra",
       "createdAt": "2021-11-19 20:39:36",
       "updatedAt": "2021-11-19 20:39:36",
-      "previewImage": "image url" // maybe of VIN?
+      "previewImage": "image url", // maybe of VIN?
+      "status": "status", // "active", "locked", "awaiting key", etc.
     }
     ```
 
@@ -461,7 +466,8 @@ Adds and returns a new vehicle.
       "createdAt": "2021-11-19 20:39:36",
       "updatedAt": "2021-11-19 20:39:36",
       "previewImage": "image url", // maybe of VIN?
-      "keyImage": "image url"
+      "keyImage": "image url",
+      "status": "status", // "active", "locked", "awaiting key", etc.
     }
     ```
 
@@ -482,7 +488,8 @@ Adds and returns a new vehicle.
       "model": "Sierra",
       "createdAt": "2021-11-19 20:39:36",
       "updatedAt": "2021-11-19 20:39:36",
-      "previewImage": "image url" // maybe of VIN?
+      "previewImage": "image url", // maybe of VIN?
+      "status": "status", // "active", "locked", "awaiting key", etc.
     }
     ```
 
@@ -502,7 +509,8 @@ Adds and returns a new vehicle.
         "make": "Make of the vehicle is required",
         "model": "Model of the vehicle is required",
         "keyType": "keyType can be 'smart key', 'transponder', or 'high-security' only", // "smart key": or "transponder": or "high-security":,
-        "price": "price is required and must be greater than 0" //225, 100, 75, each is associated with a type of key.
+        "price": "price is required and must be greater than 0", //225, 100, 75, each is associated with a type of key.
+        "status": "status", // "active", "locked", "awaiting key", etc.
       }
     }
     ```
@@ -598,7 +606,8 @@ Updates and returns an existing vehicle.
       "keyType": "keyType", // "smart key": or "transponder": or "high-security": NOT editable by Owners
       "price": 225, //225, 100, 75, each is associated with a type of key. NOT editable by Owners
       "previewImage": "image url", // maybe of VIN?
-      "keyImage": "image url"
+      "keyImage": "image url",
+      "status": "status", // "active", "locked", "awaiting key", etc.
     }
     ```
 
@@ -622,7 +631,8 @@ Updates and returns an existing vehicle.
       "createdAt": "2021-11-19 20:39:36",
       "updatedAt": "2021-11-19 20:39:36",
       "previewImage": "image url", // maybe of VIN?
-      "keyImage": "image url"
+      "keyImage": "image url",
+      "status": "status", // "active", "locked", "awaiting key", etc.
     }
     ```
 
@@ -1530,7 +1540,8 @@ Return vehicles filtered by query parameters.
           "createdAt": "2021-11-19 20:39:36",
           "updatedAt": "2021-11-19 20:39:36",
           "previewImage": "image url", // maybe of VIN?
-          "keyImage": "image url"
+          "keyImage": "image url",
+          "status": "status", // "active", "locked", "awaiting key", etc.
         }
       ],
       "page": 2,
