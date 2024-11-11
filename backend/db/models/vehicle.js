@@ -22,7 +22,8 @@ module.exports = (sequelize, DataTypes) => {
     keyType: DataTypes.ENUM,
     price: DataTypes.DECIMAL,
     previewImage: DataTypes.STRING,
-    keyImage: DataTypes.STRING
+    keyImage: DataTypes.STRING,
+    status: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Vehicle',
