@@ -17,43 +17,63 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       companyName: {
-        type: Sequelize.STRING
+        allowNull: false,
+        type: Sequelize.STRING(255)
       },
       address: {
-        type: Sequelize.STRING
+        allowNull: false,
+        unique: true,
+        type: Sequelize.STRING(512)
       },
       city: {
-        type: Sequelize.STRING
+        allowNull: false,
+        type: Sequelize.STRING(255)
       },
       state: {
-        type: Sequelize.STRING
+        allowNull: false,
+        type: Sequelize.STRING(100)
       },
       zip: {
-        type: Sequelize.INTEGER
+        allowNull: false,
+        type: Sequelize.STRING(10)
       },
       country: {
-        type: Sequelize.STRING
+        allowNull: false,
+        type: Sequelize.STRING(100)
       },
       email: {
-        type: Sequelize.STRING
+        allowNull: false,
+        type: Sequelize.STRING(255),
+        validate: {
+          isEmail: {
+            msg: "Please provide a valid email address"
+          }
+        },
+        unique: true
       },
       passwordHash: {
-        type: Sequelize.STRING
+        allowNull: false,
+        type: Sequelize.STRING(60)
       },
       role: {
-        type: Sequelize.ENUM
+        allowNull: false,
+        type: Sequelize.ENUM('admin', 'owner', 'locksmith')
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       }
     });
+    await queryInterface.addIndex('Users', ['email']);
+    await queryInterface.addIndex('Users', ['address']);
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Users');
+    await queryInterface.dropTable(options);
   }
 };
