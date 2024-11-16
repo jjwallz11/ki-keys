@@ -1,29 +1,51 @@
+// backend/models/locksmith.js
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Locksmith extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
+      Locksmith.belongsTo(models.User, { foreignKey: 'userId', onDelete: 'CASCADE' });
     }
   }
-  Locksmith.init({
-    userId: DataTypes.INTEGER,
-    companyName: DataTypes.STRING,
-    address: DataTypes.STRING,
-    city: DataTypes.STRING,
-    state: DataTypes.STRING,
-    zip: DataTypes.INTEGER,
-    country: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Locksmith',
-  });
+
+  Locksmith.init(
+    {
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      companyName: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+      },
+      address: {
+        type: DataTypes.STRING(512),
+        allowNull: false,
+        unique: true,
+      },
+      city: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+      },
+      state: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+      },
+      zip: {
+        type: DataTypes.STRING(10),
+        allowNull: false,
+      },
+      country: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+      },
+    },
+    {
+      sequelize,
+      modelName: 'Locksmith',
+    }
+  );
+
   return Locksmith;
 };

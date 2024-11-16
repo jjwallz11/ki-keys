@@ -1,32 +1,60 @@
+// backend/models/vehicle.js
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Vehicle extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
+      Vehicle.belongsTo(models.User, { foreignKey: 'ownerId', onDelete: 'CASCADE' });
+      Vehicle.hasMany(models.Invoice, { foreignKey: 'vehicleId', onDelete: 'CASCADE' });
+      Vehicle.hasMany(models.Image, { foreignKey: 'vehicleId', onDelete: 'CASCADE' });
     }
   }
-  Vehicle.init({
-    ownerId: DataTypes.INTEGER,
-    year: DataTypes.INTEGER,
-    make: DataTypes.STRING,
-    model: DataTypes.STRING,
-    vin: DataTypes.STRING,
-    keyType: DataTypes.ENUM,
-    price: DataTypes.DECIMAL,
-    previewImage: DataTypes.STRING,
-    keyImage: DataTypes.STRING,
-    status: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Vehicle',
-  });
+
+  Vehicle.init(
+    {
+      ownerId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      year: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      make: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+      },
+      model: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+      },
+      vin: {
+        type: DataTypes.STRING(17),
+        unique: true,
+        allowNull: false,
+      },
+      keyType: {
+        type: DataTypes.ENUM('smart', 'transponder', 'high-security'),
+        allowNull: false,
+      },
+      price: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+      },
+      previewImage: DataTypes.STRING(512),
+      keyImage: DataTypes.STRING(512),
+      status: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+        defaultValue: 'active',
+      },
+    },
+    {
+      sequelize,
+      modelName: 'Vehicle',
+    }
+  );
+
   return Vehicle;
 };

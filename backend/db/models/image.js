@@ -1,25 +1,35 @@
+// backend/models/image.js
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Image extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
+      Image.belongsTo(models.Vehicle, { foreignKey: 'vehicleId', onDelete: 'CASCADE' });
+      Image.belongsTo(models.Key, { foreignKey: 'keyId', onDelete: 'CASCADE' });
     }
   }
-  Image.init({
-    vehicleId: DataTypes.INTEGER,
-    keyId: DataTypes.INTEGER,
-    imageUrl: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Image',
-  });
+
+  Image.init(
+    {
+      vehicleId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      keyId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      imageUrl: {
+        type: DataTypes.STRING(512),
+        allowNull: true,
+      },
+    },
+    {
+      sequelize,
+      modelName: 'Image',
+    }
+  );
+
   return Image;
 };
