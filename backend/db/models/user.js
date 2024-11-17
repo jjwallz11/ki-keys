@@ -1,14 +1,23 @@
 // backend/db/models/user.js
-'use strict';
+"use strict";
 
-const { Model } = require('sequelize');
+const { Model, Validator } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
-      User.hasMany(models.Vehicle, { foreignKey: 'ownerId', onDelete: 'CASCADE' });
-      User.hasMany(models.Invoice, { foreignKey: 'userId', onDelete: 'CASCADE' });
-      User.hasMany(models.Invoice, { foreignKey: 'locksmithId', onDelete: 'CASCADE' });
+      User.hasMany(models.Vehicle, {
+        foreignKey: "ownerId",
+        onDelete: "CASCADE",
+      });
+      User.hasMany(models.Invoice, {
+        foreignKey: "userId",
+        onDelete: "CASCADE",
+      });
+      User.hasMany(models.Invoice, {
+        foreignKey: "locksmithId",
+        onDelete: "CASCADE",
+      });
     }
   }
 
@@ -44,21 +53,41 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         unique: true,
         validate: {
+          len: [3, 256],
           isEmail: true,
         },
       },
-      passwordHash: {
-        type: DataTypes.STRING(60),
+      username: {
+        type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
+        len: [4, 30],
+        isNotEmail(val) {
+          if (Validator.isEmail(val)) {
+            throw Error("Cannot be email.");
+          }
+        },
+      },
+      passwordHash: {
+        type: DataTypes.STRING(60).BINARY,
+        allowNull: false,
+        validate: {
+          len: [60, 60],
+        },
       },
       role: {
-        type: DataTypes.ENUM('admin', 'owner', 'locksmith'),
+        type: DataTypes.ENUM("admin", "owner", "locksmith"),
         allowNull: false,
       },
     },
     {
       sequelize,
-      modelName: 'User',
+      modelName: "User",
+      defaultScope: {
+        attributes: {
+          exclude: ["passwordHash", "email", "createdAt", "updatedAt"],
+        },
+      },
     }
   );
 
