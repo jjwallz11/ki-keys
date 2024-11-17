@@ -25,16 +25,6 @@ module.exports = {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE'
       },
-      keyId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Keys',
-          key: 'id'
-        },
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE'
-      },
       imageUrl: {
         type: Sequelize.STRING(512),
         allowNull: true

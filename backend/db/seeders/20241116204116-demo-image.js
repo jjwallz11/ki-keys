@@ -12,10 +12,7 @@ module.exports = {
       [
         {
           vehicleId: 1, // Matches an entry in the Vehicles table
-          keyId: 1, // Matches an entry in the Keys table if applicable
           imageUrl: 'http://example.com/image.jpg',
-          createdAt: new Date(),
-          updatedAt: new Date(),
         },
       ],
       options

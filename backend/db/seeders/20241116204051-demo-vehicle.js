@@ -20,9 +20,7 @@ module.exports = {
           price: 75.00,
           previewImage: 'http://example.com/preview.jpg',
           keyImage: 'http://example.com/key.jpg',
-          status: 'active',
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          status: 'active-locked',
         },
         {
           ownerId: 2, // Ensure this owner ID matches an entry in the Users table
@@ -34,9 +32,7 @@ module.exports = {
           price: 75.00,
           previewImage: 'http://example.com/preview.jpg',
           keyImage: 'http://example.com/key.jpg',
-          status: 'active',
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          status: 'active-key made',
         },
         {
           ownerId: 3, // Ensure this owner ID matches an entry in the Users table
@@ -48,9 +44,7 @@ module.exports = {
           price: 150.00,
           previewImage: 'http://example.com/preview.jpg',
           keyImage: 'http://example.com/key.jpg',
-          status: 'active',
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          status: 'paid',
         },
       ],
       options

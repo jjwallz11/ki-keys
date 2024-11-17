@@ -18,8 +18,6 @@ module.exports = {
           state: 'LT',
           zip: '67890',
           country: 'USA',
-          createdAt: new Date(),
-          updatedAt: new Date(),
         },
       ],
       options
