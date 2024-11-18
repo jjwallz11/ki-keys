@@ -1,5 +1,11 @@
 // backend/routes/api/index.js
 const router = require("express").Router();
+const sessionRouter = require('./session');
+const usersRouter = require('./users');
+const vehiclesRouter = require('./vehicles');
+const invoicesRouter = require('./invoices');
+const imagesRouter = require('./images');
+const { restoreUser } = require('../../utils/auth');
 
 // GET /api/set-token-cookie
 // const { setTokenCookie, restoreUser } = require("../../utils/auth.js");
@@ -25,6 +31,12 @@ router.use(restoreUser);
 // router.get("/require-auth", requireAuth, (req, res) => {
 //   return res.json(req.user);
 // });
+
+router.use('/session', sessionRouter);
+router.use('/users', usersRouter);
+router.use('/vehicles', vehiclesRouter);
+router.use('/invoices', invoicesRouter);
+router.use('/images', imagesRouter);
 
 /************ TEST ROUTE ******************************/
 
