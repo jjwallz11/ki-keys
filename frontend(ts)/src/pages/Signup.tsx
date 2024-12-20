@@ -1,8 +1,15 @@
-import React, { useState } from 'react';
-import { signupUser } from '../services/api';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
+import { signupUser } from '../services';
 
-const Signup = () => {
-  const [formData, setFormData] = useState({
+const Signup: React.FC = () => {
+  interface FormData {
+    email: string;
+    first_name: string;
+    last_name: string;
+    password: string;
+  }
+
+  const [formData, setFormData] = useState<FormData>({
     email: '',
     first_name: '',
     last_name: '',
@@ -10,17 +17,21 @@ const Signup = () => {
   });
   const [message, setMessage] = useState('');
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
       const response = await signupUser(formData);
       setMessage(`User created successfully: ${response.user.email}`);
-    } catch (error) {
-      setMessage(`Error: ${error.response?.data?.error || 'Something went wrong'}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setMessage(`Error: ${error.message}`);
+      } else {
+        setMessage('Something went wrong');
+      }
     }
   };
 
