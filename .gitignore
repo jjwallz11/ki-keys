@@ -3,4 +3,6 @@ node_modules
 build
 .DS_Store
 *.db
-backend(js)
+backendJS
+.flaskenv
+.venv
