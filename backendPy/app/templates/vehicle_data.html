@@ -1,0 +1,9 @@
+{% extends "vehicles.html" %}
+{% block content %}
+    {% for vehicle in vehicles %}
+    <div>{{ vehicle.vin }}</div>
+    <div>{{ vehicle.year }}</div>
+    <div>{{ vehicle.make }}</div>
+    <div>{{ vehicle.model }}</div>
+    {% endfor %}
+{% endblock %}
