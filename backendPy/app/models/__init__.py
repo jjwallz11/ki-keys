@@ -1,8 +1,11 @@
 # models/__init__.py
-from .inventory import Inventory
+from .users import User
+from .locksmiths import Locksmith
+from .vehicles import Vehicle
 from .order import Order
-from .session import Session
+from .inventory import Inventory
 from .tracking import Tracking
-from .vehicles import Vehicles
+from .session import Session
 
-__all__ = ["Inventory", "Order", "Session", "Tracking", "Vehicles"]
+# Expose all models for easy import
+__all__ = ["User", "Locksmith", "Vehicle", "Order", "Inventory", "Tracking", "Session"]
