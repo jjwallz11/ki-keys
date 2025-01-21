@@ -1,0 +1,39 @@
+{% extends "main.html" %}
+{% block content %}
+    <h2>Vehicles Needing Keys</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Year</th>
+                <th>Make</th>
+                <th>Model</th>
+                <th>VIN</th>
+                <th>Assign Key Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vehicle in vehicles %}
+                <tr>
+                    <td>{{ vehicle.year }}</td>
+                    <td>{{ vehicle.make }}</td>
+                    <td>{{ vehicle.model }}</td>
+                    <td>{{ vehicle.vin }}</td>
+                    <td>
+                        {% if not vehicle.key_type %}
+                            <form action="{{ url_for('inventory.assign_key_type', vehicle_id=vehicle.id) }}" method="POST">
+                                <select name="key_type" required>
+                                    <option value="smart key">Smart Key</option>
+                                    <option value="transponder">Transponder</option>
+                                    <option value="high-security">High-Security</option>
+                                </select>
+                                <button type="submit">Assign</button>
+                            </form>
+                        {% else %}
+                            {{ vehicle.key_type }}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

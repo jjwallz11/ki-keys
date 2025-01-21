@@ -1,0 +1,26 @@
+{% extends "main.html" %}
+{% block content %}
+    <h2>Inventory</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Key Type</th>
+                <th>Quantity</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in inventory %}
+                <tr>
+                    <td>{{ item.key_type }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>
+                        <a href="{{ url_for('inventory.update', inventory_id=item.id) }}">Update</a>
+                        <a href="{{ url_for('inventory.delete', inventory_id=item.id) }}" onclick="return confirm('Are you sure?');">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('inventory.add') }}" class="button">Add Inventory</a>
+{% endblock %}

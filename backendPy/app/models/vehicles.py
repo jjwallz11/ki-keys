@@ -13,13 +13,13 @@ class Vehicle(db.Model):
     make = db.Column(db.String(50), nullable=False)
     model = db.Column(db.String(50), nullable=False)
     vin = db.Column(db.String(17), unique=True, nullable=False)
-    key_type = db.Column(Enum('smart key', 'transponder', 'high-security', name='key_type_enum'), nullable=False)
+    key_type = db.Column(Enum('smart key', 'transponder', 'high-security', name='key_type_enum'), nullable=True)
     price = db.Column(db.Numeric(10, 2), CheckConstraint('price > 0'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime, onupdate=datetime, nullable=False)
     preview_image = db.Column(db.String, nullable=True)  # URL for preview image
     key_image = db.Column(db.String, nullable=True)      # URL for key image
-    
+
     # Relationships
     orders = db.relationship('Order', back_populates='vehicle', cascade='all, delete-orphan')
     

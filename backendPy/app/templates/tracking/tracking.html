@@ -1,0 +1,22 @@
+{% extends "main.html" %}
+{% block content %}
+    <h2>Tracking</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Key Type</th>
+                <th>Vehicles Needing Key</th>
+                <th>Inventory Shortage</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in tracking %}
+                <tr>
+                    <td>{{ item.key_type }}</td>
+                    <td>{{ item.vehicles_needing_key }}</td>
+                    <td>{{ item.inventory_shortage }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

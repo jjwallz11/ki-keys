@@ -1,0 +1,19 @@
+{% extends "main.html" %}
+{% block content %}
+    <h2>Add Vehicle</h2>
+    <form action="{{ url_for('vehicles.add') }}" method="POST">
+        <label for="year">Year:</label>
+        <input type="number" id="year" name="year" min="1949" max="2024" required>
+
+        <label for="make">Make:</label>
+        <input type="text" id="make" name="make" required>
+
+        <label for="model">Model:</label>
+        <input type="text" id="model" name="model" required>
+
+        <label for="vin">VIN:</label>
+        <input type="text" id="vin" name="vin" maxlength="17" required>
+
+        <button type="submit">Add Vehicle</button>
+    </form>
+{% endblock %}
