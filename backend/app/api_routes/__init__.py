@@ -1,4 +1,4 @@
-# app/routes/__init__.py
+# app/api_routes/__init__.py
 from app.routes.locksmiths_routes import locksmiths_routes
 from app.routes.main_routes import main_routes
 from app.routes.orders_routes import orders_routes
