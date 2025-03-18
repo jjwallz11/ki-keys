@@ -1,12 +1,15 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import CheckConstraint, Enum
-from datetime import datetime
+from datetime import datetime, timezone
 
 db = SQLAlchemy()
 
 
 class Invoice(db.Model):
     __tablename__ = 'invoices'
+    
+    utc_time = datetime.datetime.now(datetime.timezone.utc)
+    naive_utc_time = utc_time.replace(tzinfo=None)
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
@@ -18,8 +21,8 @@ class Invoice(db.Model):
     amount = db.Column(db.Numeric(10, 2), CheckConstraint('amount > 0'), nullable=False)
     due_date = db.Column(db.Date, nullable=False)
     total_due = db.Column(db.Numeric(10, 2), CheckConstraint('total_due > 0'), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime, nullable=False)
-    updated_at = db.Column(db.DateTime, default=datetime, onupdate=datetime, nullable=False)
+    created_at = db.Column(db.DateTime, default=naive_utc_time, nullable=False)
+    updated_at = db.Column(db.DateTime, default=naive_utc_time, onupdate=naive_utc_time, nullable=False)
 
     # Relationships
     user = db.relationship('User', back_populates='invoices')
