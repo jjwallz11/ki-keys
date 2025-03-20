@@ -1,0 +1,31 @@
+# Core FastAPI framework
+fastapi
+
+# ASGI server to run FastAPI
+uvicorn
+
+# Database driver for PostgreSQL
+asyncpg
+
+# SQLAlchemy for database ORM
+sqlalchemy
+
+# Pydantic for data validation
+pydantic
+
+# Authentication utilities (JWT handling)
+python-jose
+passlib[bcrypt]
+
+# Environment variable management
+python-dotenv
+
+# HTTP client for making external API calls (e.g., NHTSA API)
+httpx
+
+# Image handling for receipt processing (if applicable)
+pillow
+
+# Optional: If you plan to use barcode or OCR for receipts
+pyzbar   # Barcode scanning
+pytesseract  # OCR (if using text extraction from receipts)

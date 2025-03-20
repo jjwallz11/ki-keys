@@ -90,34 +90,6 @@ npm install
 npm start
 ```
 
-## API Endpoints
-
-### Authentication  
-
-- `POST /api/session/signup` - Create a new user  
-- `POST /api/session/login` - Authenticate a user  
-
-### Vehicles  
-
-- `GET /api/vehicles/{vin}` - Retrieve vehicle details by VIN  
-- `POST /api/vehicles/scanned` - Store scanned VIN  
-
-### Inventory  
-
-- `GET /inventory` - Retrieve available key inventory  
-- `PUT /inventory/update` - Deduct key from inventory  
-
-### Invoices  
-
-- `POST /invoices/generate` - Create a new invoice  
-- `GET /invoices` - Retrieve all invoices  
-- `PUT /invoices/{invoice_id}/approve` - Approve and finalize invoice  
-
-### Receipts  
-
-- `POST /receipts/upload` - Upload a receipt  
-- `POST /receipts/process` - Process receipt and update inventory  
-
 ## Contributing  
 
 1. Fork the repository  
