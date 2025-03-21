@@ -10,4 +10,4 @@ undo:
 
 # Run FastAPI backend
 run:
-	uvicorn app.main:app --reload
+	PYTHONPATH=. uvicorn app.main:app --reload

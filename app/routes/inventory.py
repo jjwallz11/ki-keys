@@ -8,12 +8,12 @@ from app.schemas.inventory import InventoryCreate, InventoryUpdate, InventoryRes
 router = APIRouter()
 
 # Ensure proper roles can view only
-@router.get("/inventory", response_model=list[InventoryResponse])
+@router.get("", response_model=list[InventoryResponse])
 def read_inventory(user: dict = Depends(admin_or_locksmith), db: Session = Depends(get_db)):
     items = db.query(Inventory).all()
     return items
 # Create a new inventory record (new key type)
-@router.post("/inventory", response_model=InventoryResponse)
+@router.post("", response_model=InventoryResponse)
 def create_inventory(item: InventoryCreate, db: Session = Depends(get_db)):
     # Check if key type already exists, etc.
     new_item = Inventory(
@@ -28,13 +28,13 @@ def create_inventory(item: InventoryCreate, db: Session = Depends(get_db)):
     return new_item
 
 # Read all inventory items
-@router.get("/inventory", response_model=list[InventoryResponse])
+@router.get("", response_model=list[InventoryResponse])
 def read_inventory(db: Session = Depends(get_db)):
     items = db.query(Inventory).all()
     return items
 
 # Update an inventory record (e.g., update quantity)
-@router.put("/inventory/{item_id}", response_model=InventoryResponse)
+@router.put("/{item_id}", response_model=InventoryResponse)
 def update_inventory(item_id: int, item: InventoryUpdate, db: Session = Depends(get_db)):
     inventory_item = db.query(Inventory).filter(Inventory.id == item_id).first()
     if not inventory_item:
@@ -51,7 +51,7 @@ def update_inventory(item_id: int, item: InventoryUpdate, db: Session = Depends(
     return inventory_item
 
 # Delete an inventory record
-@router.delete("/inventory/{item_id}")
+@router.delete("/{item_id}")
 def delete_inventory(item_id: int, db: Session = Depends(get_db)):
     inventory_item = db.query(Inventory).filter(Inventory.id == item_id).first()
     if not inventory_item:

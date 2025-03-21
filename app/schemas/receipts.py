@@ -15,7 +15,9 @@ class ReceiptItemResponse(ReceiptItemBase):
     id: int
 
     class Config:
-        orm_mode = True
+        model_config = {
+        "from_attributes": True
+    }
 
 class ReceiptBase(BaseModel):
     user_id: int
@@ -31,4 +33,6 @@ class ReceiptResponse(ReceiptBase):
     items: List[ReceiptItemResponse] = []
 
     class Config:
-        orm_mode = True
+        model_config = {
+        "from_attributes": True
+    }

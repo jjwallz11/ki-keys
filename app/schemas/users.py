@@ -21,7 +21,8 @@ class UserUpdate(BaseModel):
     password: Optional[str] = None
 
 class UserResponse(UserBase):
-    id: int  # Include user ID in responses
+    id: int
 
-    class Config:
-        orm_mode = True
+    model_config = {
+        "from_attributes": True
+    }

@@ -20,7 +20,9 @@ class InvoiceItemResponse(InvoiceItemBase):
     invoice_id: int
 
     class Config:
-        orm_mode = True
+        model_config = {
+        "from_attributes": True
+    }
 
 class InvoiceBase(BaseModel):
     invoice_number: str
@@ -39,4 +41,6 @@ class InvoiceResponse(InvoiceBase):
     items: List[InvoiceItemResponse] = []
 
     class Config:
-        orm_mode = True
+        model_config = {
+        "from_attributes": True
+    }
