@@ -5,18 +5,23 @@ from app.utils.auth import create_access_token, verify_password, get_current_use
 from app.utils.db import get_db
 from app.models.users import User
 from app.utils.errors import error_400, error_401
+from pydantic import BaseModel, EmailStr
 
 router = APIRouter()
 
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
 @router.post("/session/login")
-def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+def login(payload: LoginRequest, db: Session = Depends(get_db)):
     """ Authenticate user and return JWT token """
-    user = db.query(User).filter(User.email == form_data.username).first()
-    if not user or not verify_password(form_data.password, user.password_hash):
+    user = db.query(User).filter(User.email == payload.email).first()
+    if not user or not verify_password(payload.password, user.password_hash):
         error_400("Invalid credentials")
 
     access_token = create_access_token({"sub": user.email})
-    
+
     return {
         "message": "Login successful",
         "access_token": access_token,

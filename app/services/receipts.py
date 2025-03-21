@@ -1,4 +1,4 @@
-# backend/app/services/receipts.py
+# app/services/receipts.py
 from sqlalchemy.orm import Session
 from app.models.receipts import Receipt
 from app.models.receipt_items import ReceiptItem

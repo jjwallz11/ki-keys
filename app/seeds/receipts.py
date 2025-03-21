@@ -1,4 +1,4 @@
-# backend/seed/seed_receipts.py
+# seeds/receipts.py
 
 from datetime import datetime
 from app.utils.db import SessionLocal
@@ -42,6 +42,19 @@ def seed_receipts():
         print("Seeded receipt data with receipt items.")
     finally:
         db.close()
+        
+        
 
+def undo_receipts():
+    db = SessionLocal()
+    try:
+        deleted_items = db.query(ReceiptItem).delete()
+        deleted_receipts = db.query(Receipt).delete()
+        db.commit()
+        print(f"Deleted {deleted_items} receipt items and {deleted_receipts} receipts.")
+    finally:
+        db.close()
+        
+        
 if __name__ == "__main__":
     seed_receipts()

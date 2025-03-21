@@ -1,4 +1,4 @@
-# backend/app/routes/receipts.py
+# app/routes/receipts.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.utils.db import get_db

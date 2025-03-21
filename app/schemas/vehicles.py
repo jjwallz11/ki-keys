@@ -1,4 +1,4 @@
-# backend/app/schemas/vehicles.py
+# app/schemas/vehicles.py
 
 from pydantic import BaseModel, constr
 from typing import Optional
