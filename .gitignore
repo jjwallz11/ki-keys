@@ -181,3 +181,5 @@ cython_debug/
 .pypirc
 
 pushCommand.md
+backendBrowserTests.md
+Makefile

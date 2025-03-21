@@ -18,4 +18,6 @@ class InventoryResponse(InventoryBase):
     added_by: int
 
     class Config:
-        orm_mode = True
+        model_config = {
+        "from_attributes": True
+    }

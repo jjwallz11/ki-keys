@@ -10,6 +10,7 @@ class User(Base):
     first_name = Column(String, nullable=True)  # Optional for company owners, required for admins
     last_name = Column(String, nullable=True)   # Optional for company owners, required for admins
     company = Column(String, nullable=True)     # Optional field for company name
+    phone = Column(String, nullable=True)       # Optional field for phone
     role = Column(String, default="owner", nullable=False)  # 'owner', 'admin', etc.
     
     __table_args__ = (

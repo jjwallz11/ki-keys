@@ -14,4 +14,6 @@ class VehicleResponse(BaseModel):
     plantCountry: Optional[str] = "Unknown"
 
     class Config:
-        orm_mode = True
+        model_config = {
+        "from_attributes": True
+    }
