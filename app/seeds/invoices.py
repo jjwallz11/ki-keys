@@ -1,4 +1,4 @@
-# backend/seed/seed_invoices.py
+# seeds/invoices.py
 
 from datetime import datetime, timedelta
 from app.utils.db import SessionLocal
@@ -50,6 +50,17 @@ def seed_invoices():
             db.add(item)
         db.commit()
         print("Seeded invoice data with invoice items.")
+    finally:
+        db.close()
+        
+
+def undo_invoices():
+    db = SessionLocal()
+    try:
+        deleted_items = db.query(InvoiceItem).delete()
+        deleted_invoices = db.query(Invoice).delete()
+        db.commit()
+        print(f"Deleted {deleted_items} invoice items and {deleted_invoices} invoices.")
     finally:
         db.close()
 

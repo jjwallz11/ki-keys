@@ -1,4 +1,4 @@
-# backend/app/models/receipts.py
+# app/models/receipts.py
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
 from datetime import datetime
 from app.utils.db import Base

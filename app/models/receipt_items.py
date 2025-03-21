@@ -1,4 +1,4 @@
-# backend/app/models/receipt_items.py
+# app/models/receipt_items.py
 from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from app.utils.db import Base
 

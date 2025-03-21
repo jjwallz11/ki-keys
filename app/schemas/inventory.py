@@ -1,4 +1,4 @@
-# File: backend/app/schemas/inventory.py
+# app/schemas/inventory.py
 from pydantic import BaseModel
 
 class InventoryBase(BaseModel):

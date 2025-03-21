@@ -1,4 +1,4 @@
-# backend/seed/seed_users.py
+# seeds/users.py
 
 from app.utils.db import engine, Base, SessionLocal
 from app.models.users import User
@@ -53,6 +53,16 @@ def seed_users():
             db.refresh(owner)
             print(f"Created owner with email: {owner_email}")
             
+    finally:
+        db.close()
+
+def undo_users():
+    db = SessionLocal()
+    try:
+        # Delete all users
+        deleted_count = db.query(User).delete()
+        db.commit()
+        print(f"Successfully deleted {deleted_count} users from the database.")
     finally:
         db.close()
 
