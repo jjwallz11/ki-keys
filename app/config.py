@@ -9,7 +9,7 @@ DB_PATH = BASE_DIR / "dev.db"
 class Settings(BaseSettings):
     DATABASE_URL: str = f"sqlite:///{DB_PATH}"
     SECRET_KEY: str
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 720
     ALGORITHM: str = "HS256"
     DEBUG: bool = False
     ENVIRONMENT: str = "development"

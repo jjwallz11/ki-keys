@@ -13,10 +13,13 @@ async def fetch_vehicle_data(vin: str):
         raise HTTPException(status_code=502, detail="NHTSA API is unavailable")
     return {item["Variable"]: item["Value"] for item in response.json().get("Results", []) if item["Value"]}
 
-@router.get("/api/vehicles/{vin}")
-async def get_vehicle_by_vin(vin: str, user: dict = Depends(get_current_user), vehicle_data: dict = Depends(fetch_vehicle_data)):
+@router.get("/{vin}")
+async def get_vehicle_by_vin(vin: str, user: dict = Depends(get_current_user)):
     if len(vin) != 17:
         raise HTTPException(status_code=400, detail="Invalid VIN format")
+
+    vehicle_data = await fetch_vehicle_data(vin)
+
     return {
         "vin": vin,
         "make": vehicle_data.get("Make", "Unknown"),
