@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy.orm import relationship
 from app.utils.db import Base
 
 class InvoiceItem(Base):
@@ -10,3 +11,5 @@ class InvoiceItem(Base):
     quantity = Column(Integer, nullable=False, default=1)
     unit_price = Column(Float, nullable=False)
     amount = Column(Float, nullable=False)
+    
+    invoice = relationship("Invoice", back_populates="items")
