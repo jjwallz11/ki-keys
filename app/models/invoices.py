@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey
+from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.utils.db import Base
 
@@ -14,3 +15,5 @@ class Invoice(Base):
     due_date = Column(DateTime, nullable=False)
     total_due = Column(Float, default=0.0)
     created_at = Column(DateTime, default=datetime.utcnow)
+    
+    items = relationship("InvoiceItem", back_populates="invoice", lazy="joined", cascade="all, delete-orphan")

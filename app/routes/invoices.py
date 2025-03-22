@@ -21,14 +21,10 @@ def generate_invoice(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    print("👤 current_user:", current_user)
-    print("🧢 role:", getattr(current_user, "role", None))
-
     if current_user.role not in ["admin", "locksmith"]:
         raise HTTPException(status_code=403, detail="Not authorized to generate invoices")
 
-    invoice.user_id = current_user.id
-    return create_invoice(db, invoice)
+    return create_invoice(db, invoice, user_id=current_user.id)
 
 @router.get("", response_model=list[InvoiceResponse])
 def read_invoices(
