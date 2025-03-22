@@ -26,7 +26,6 @@ class InvoiceItemResponse(InvoiceItemBase):
 
 class InvoiceBase(BaseModel):
     invoice_number: str
-    user_id: int
     bill_to: Optional[str] = None
     date: datetime
     terms: Optional[str] = None

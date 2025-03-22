@@ -1,17 +1,19 @@
 from datetime import datetime, timedelta
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
+from sqlalchemy.orm import Session
+from app.config import settings
+from app.utils.db import get_db
+from app.models.users import User
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
 # Secret key for encoding & decoding JWT
-SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/session/login")
 
@@ -25,22 +27,41 @@ def hash_password(password):
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))  # ✅ Use settings
     to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+    print("🕒 TOKEN EXPIRES AT:", expire.isoformat())  # Debug
+    return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 def decode_access_token(token: str):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
         return payload
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
-    payload = decode_access_token(token)
-    return payload  # Returns decoded user data
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
+    print("🔐 TOKEN RECEIVED:", token)
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        print("📦 DECODED PAYLOAD:", payload)
+        email: str = payload.get("sub")
+        if not email:
+            print("❌ No email in token!")
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token: missing subject")
+    except JWTError as e:
+        print("❌ JWT DECODE ERROR:", str(e))
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials")
 
-def admin_or_locksmith(user: dict = Depends(get_current_user)):
-    if user.get("role") not in ["admin", "locksmith"]:
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        print("❌ No user found with email:", email)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    print("✅ AUTHENTICATED USER:", user.email, user.role)
+    return user
+
+def admin_or_locksmith(user: User = Depends(get_current_user)):
+    if user.role not in ["admin", "locksmith"]:
         raise HTTPException(status_code=403, detail="Insufficient permissions")
     return user

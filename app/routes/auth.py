@@ -40,7 +40,7 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/session/login")
 
 @router.get("/session/current")
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+def session_info_route(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         email: str = payload.get("sub")
