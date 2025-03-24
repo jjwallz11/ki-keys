@@ -8,6 +8,14 @@ from fastapi.middleware.cors import CORSMiddleware
 # Create FastAPI app with a title and debug mode based on config
 app = FastAPI(title="Patriotic Keys API", debug=settings.DEBUG)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:8081"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -54,11 +62,3 @@ if settings.ENVIRONMENT == "production":
     origins = ["https://yourdomain.com"]
 else:
     origins = ["*"]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)

@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from app.utils.auth import create_access_token, verify_password, get_current_user
-from app.utils.db import get_db
+from app.utils.db import get_async_db
 from app.models.users import User
 from app.utils.errors import error_400, error_401
 from pydantic import BaseModel, EmailStr
@@ -16,7 +17,7 @@ class LoginRequest(BaseModel):
     password: str
 
 @router.post("/session/login")
-def login(payload: LoginRequest, db: Session = Depends(get_db)):
+async def login(payload: LoginRequest, db: AsyncSession = Depends(get_async_db)):
     """ Authenticate user and return JWT token """
     user = db.query(User).filter(User.email == payload.email).first()
     if not user or not verify_password(payload.password, user.password_hash):
@@ -40,7 +41,7 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/session/login")
 
 @router.get("/session/current")
-def session_info_route(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+async def session_info_route(token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_async_db)):
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         email: str = payload.get("sub")
@@ -62,6 +63,6 @@ def session_info_route(token: str = Depends(oauth2_scheme), db: Session = Depend
     }
 
 @router.post("/session/logout")
-def logout():
+async def logout():
     """ Frontend should remove token upon logout request """
     return {"message": "Logout successful, please remove token on client side"}

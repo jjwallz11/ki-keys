@@ -1,69 +1,96 @@
-from sqlalchemy.orm import Session
+# app/services/invoices.py
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from sqlalchemy import delete
+from datetime import datetime, timedelta
+
 from app.models.invoices import Invoice
 from app.models.invoice_items import InvoiceItem
 from app.schemas.invoices import InvoiceCreate
-from datetime import timedelta, datetime
 
-def generate_invoice_number(db: Session) -> str:
-    last_invoice = db.query(Invoice).order_by(Invoice.id.desc()).first()
+async def generate_invoice_number(db: AsyncSession) -> str:
+    result = await db.execute(select(Invoice).order_by(Invoice.id.desc()))
+    last_invoice = result.scalars().first()
     if last_invoice and last_invoice.invoice_number:
         try:
             last_number = int(last_invoice.invoice_number.replace("INV-", ""))
             return f"INV-{last_number + 1:03d}"
         except ValueError:
-            pass  # fallback below
+            pass
     return "INV-001"
 
-def create_invoice(db: Session, invoice_data: InvoiceCreate, user_id: int) -> Invoice:
-    # Calculate the total_due based on invoice items
-    total = sum(item.quantity * item.unit_price for item in invoice_data.items)
-    invoice_number = generate_invoice_number(db)
+async def create_invoice(db: AsyncSession, invoice_data: InvoiceCreate, user_id: int) -> Invoice:
+    invoice_number = await generate_invoice_number(db)
     invoice_date = invoice_data.date or datetime.utcnow()
-    
+    due_date = invoice_data.due_date or (invoice_data.date + timedelta(days=30) if invoice_data.date else invoice_date + timedelta(days=30))
+
     invoice = Invoice(
         invoice_number=invoice_number,
+        user_id=user_id,
         bill_to=invoice_data.bill_to,
         date=invoice_date,
         terms=invoice_data.terms,
-        due_date=invoice_data.due_date or invoice_data.date + timedelta(days=30),
-        total_due=total,
-        user_id=user_id,
+        due_date=due_date,
     )
     db.add(invoice)
-    db.commit()
-    db.refresh(invoice)
-    
-    # Create invoice items
+    await db.commit()
+    await db.refresh(invoice)
+
+    total_due = 0.0
     for item in invoice_data.items:
-        invoice_item = InvoiceItem(
+        amount = item.quantity * item.unit_price
+        total_due += amount
+        db.add(InvoiceItem(
             invoice_id=invoice.id,
             key_type=item.key_type,
             quantity=item.quantity,
             unit_price=item.unit_price,
-            amount=item.quantity * item.unit_price
-        )
-        db.add(invoice_item)
-    db.commit()
-    db.refresh(invoice)
+            amount=amount
+        ))
+
+    invoice.total_due = total_due
+    await db.commit()
+    await db.refresh(invoice)
     return invoice
 
-def get_invoice_by_id(db: Session, invoice_id: int):
-    return db.query(Invoice).filter(Invoice.id == invoice_id).first()
+async def get_invoice_by_id(db: AsyncSession, invoice_id: int) -> Invoice | None:
+    result = await db.execute(select(Invoice).where(Invoice.id == invoice_id))
+    return result.scalar_one_or_none()
 
-def get_all_invoices(db: Session):
-    return db.query(Invoice).all()
+async def get_all_invoices(db: AsyncSession) -> list[Invoice]:
+    result = await db.execute(select(Invoice))
+    return result.scalars().all()
 
-def update_invoice(db: Session, invoice: Invoice, invoice_data) -> Invoice:
+async def update_invoice(db: AsyncSession, invoice: Invoice, invoice_data: InvoiceCreate) -> Invoice:
     new_date = invoice_data.date or invoice.date
     invoice.bill_to = invoice_data.bill_to or invoice.bill_to
     invoice.date = new_date
     invoice.terms = invoice_data.terms or invoice.terms
-    invoice.due_date = invoice_data.due_date or new_date + timedelta(days=30)
-    db.commit()
-    db.refresh(invoice)
+    invoice.due_date = invoice_data.due_date or (new_date + timedelta(days=30))
+
+    # Delete existing invoice items
+    await db.execute(delete(InvoiceItem).where(InvoiceItem.invoice_id == invoice.id))
+    await db.commit()
+
+    # Add updated invoice items
+    total_due = 0.0
+    for item in invoice_data.items:
+        amount = item.quantity * item.unit_price
+        total_due += amount
+        db.add(InvoiceItem(
+            invoice_id=invoice.id,
+            key_type=item.key_type,
+            quantity=item.quantity,
+            unit_price=item.unit_price,
+            amount=amount
+        ))
+
+    invoice.total_due = total_due
+    await db.commit()
+    await db.refresh(invoice)
     return invoice
 
-def delete_invoice(db: Session, invoice: Invoice):
-    # Optionally, delete related invoice items first if your DB is not cascading
-    db.delete(invoice)
-    db.commit()
+async def delete_invoice(db: AsyncSession, invoice: Invoice) -> None:
+    await db.delete(invoice)
+    await db.commit()
+    

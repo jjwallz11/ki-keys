@@ -1,4 +1,6 @@
+# app/seeds/__init__.py
 import typer
+import asyncio
 from app.seeds.users import seed_users, undo_users
 from app.seeds.inventory import seed_inventory, undo_inventory
 from app.seeds.invoices import seed_invoices, undo_invoices
@@ -17,13 +19,13 @@ def all():
         undo()
 
     typer.echo("Seeding users...")
-    seed_users()
+    asyncio.run(seed_users())
     typer.echo("Seeding inventory...")
-    seed_inventory()
+    asyncio.run(seed_inventory())
     typer.echo("Seeding invoices...")
-    seed_invoices()
+    asyncio.run(seed_invoices())
     typer.echo("Seeding receipts...")
-    seed_receipts()
+    asyncio.run(seed_receipts())
     typer.echo("✅ Seeding complete!")
 
 @app.command()
@@ -32,10 +34,10 @@ def undo():
     Remove all seeded data.
     """
     typer.echo("Undoing seeded data...")
-    undo_receipts()
-    undo_invoices()
-    undo_inventory()
-    undo_users()
+    asyncio.run(undo_receipts())
+    asyncio.run(undo_invoices())
+    asyncio.run(undo_inventory())
+    asyncio.run(undo_users())
     typer.echo("🗑️ Undo complete!")
 
 if __name__ == "__main__":

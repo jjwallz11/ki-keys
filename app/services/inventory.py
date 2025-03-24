@@ -1,11 +1,10 @@
-from sqlalchemy.orm import Session
+# app/services/inventory.py
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from app.models.inventory import Inventory
 from app.schemas.inventory import InventoryCreate, InventoryUpdate
 
-def create_inventory(db: Session, inventory_data: InventoryCreate) -> Inventory:
-    """
-    Create a new inventory record.
-    """
+async def create_inventory(db: AsyncSession, inventory_data: InventoryCreate) -> Inventory:
     new_inventory = Inventory(
         key_type=inventory_data.key_type,
         quantity=inventory_data.quantity,
@@ -13,38 +12,35 @@ def create_inventory(db: Session, inventory_data: InventoryCreate) -> Inventory:
         added_by=inventory_data.added_by
     )
     db.add(new_inventory)
-    db.commit()
-    db.refresh(new_inventory)
+    await db.commit()
+    await db.refresh(new_inventory)
     return new_inventory
 
-def get_all_inventory(db: Session):
-    """
-    Retrieve all inventory records.
-    """
-    return db.query(Inventory).all()
+async def get_all_inventory(db: AsyncSession) -> list[Inventory]:
+    result = await db.execute(select(Inventory))
+    return result.scalars().all()
 
-def update_inventory(db: Session, item_id: int, inventory_data: InventoryUpdate):
-    """
-    Update an existing inventory record.
-    """
-    inventory_item = db.query(Inventory).filter(Inventory.id == item_id).first()
+async def update_inventory(db: AsyncSession, item_id: int, inventory_data: InventoryUpdate) -> Inventory | None:
+    result = await db.execute(select(Inventory).where(Inventory.id == item_id))
+    inventory_item = result.scalar_one_or_none()
     if not inventory_item:
-        return None  # The route handler can raise an HTTPException for a 404
+        return None
+
     if inventory_data.quantity is not None:
         inventory_item.quantity = inventory_data.quantity
     if inventory_data.threshold is not None:
         inventory_item.threshold = inventory_data.threshold
-    db.commit()
-    db.refresh(inventory_item)
+
+    await db.commit()
+    await db.refresh(inventory_item)
     return inventory_item
 
-def delete_inventory(db: Session, item_id: int):
-    """
-    Delete an inventory record.
-    """
-    inventory_item = db.query(Inventory).filter(Inventory.id == item_id).first()
+async def delete_inventory(db: AsyncSession, item_id: int) -> Inventory | None:
+    result = await db.execute(select(Inventory).where(Inventory.id == item_id))
+    inventory_item = result.scalar_one_or_none()
     if not inventory_item:
-        return None  # The route handler can raise an HTTPException for a 404
-    db.delete(inventory_item)
-    db.commit()
+        return None
+
+    await db.delete(inventory_item)
+    await db.commit()
     return inventory_item

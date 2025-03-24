@@ -1,16 +1,27 @@
-# seeds/users.py
-
-from app.utils.db import engine, Base, SessionLocal
+# app/seeds/users.py
+import asyncio
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from app.utils.db import AsyncSessionLocal, Base, engine
 from app.models.users import User
 from app.utils.auth import hash_password
 
-def seed_users():
-    Base.metadata.create_all(bind=engine)  # Ensure tables are created
-    db = SessionLocal()
-    try:
-        # Create admin user if not exists
+async def seed_users():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+    async with AsyncSessionLocal() as db:
         admin_email = "johnny@jjp3.io"
-        if not db.query(User).filter(User.email == admin_email).first():
+        locksmith_email = "leeno@pkaz.com"
+        owner_email = "joel@rsa.com"
+
+        # Check if users exist
+        existing = await db.execute(select(User).where(User.email.in_([
+            admin_email, locksmith_email, owner_email
+        ])))
+        existing_emails = {u.email for u in existing.scalars().all()}
+
+        if admin_email not in existing_emails:
             admin = User(
                 email=admin_email,
                 password_hash=hash_password("BAtFitFMA13#*"),
@@ -19,13 +30,9 @@ def seed_users():
                 role="admin"
             )
             db.add(admin)
-            db.commit()
-            db.refresh(admin)
-            print(f"Created admin user with email: {admin_email}")
-        
-        # Create locksmith user if not exists
-        locksmith_email = "leeno@pkaz.com"
-        if not db.query(User).filter(User.email == locksmith_email).first():
+            print(f"Created admin user: {admin_email}")
+
+        if locksmith_email not in existing_emails:
             locksmith = User(
                 email=locksmith_email,
                 password_hash=hash_password("password"),
@@ -34,13 +41,9 @@ def seed_users():
                 role="locksmith"
             )
             db.add(locksmith)
-            db.commit()
-            db.refresh(locksmith)
-            print(f"Created locksmith user with email: {locksmith_email}")
-        
-        # Create owner user if not exists
-        owner_email = "joel@rsa.com"
-        if not db.query(User).filter(User.email == owner_email).first():
+            print(f"Created locksmith user: {locksmith_email}")
+
+        if owner_email not in existing_emails:
             owner = User(
                 email=owner_email,
                 password_hash=hash_password("password"),
@@ -49,22 +52,16 @@ def seed_users():
                 role="owner"
             )
             db.add(owner)
-            db.commit()
-            db.refresh(owner)
-            print(f"Created owner with email: {owner_email}")
-            
-    finally:
-        db.close()
+            print(f"Created owner user: {owner_email}")
 
-def undo_users():
-    db = SessionLocal()
-    try:
-        # Delete all users
-        deleted_count = db.query(User).delete()
-        db.commit()
-        print(f"Successfully deleted {deleted_count} users from the database.")
-    finally:
-        db.close()
+        await db.commit()
 
+async def undo_users():
+    async with AsyncSessionLocal() as db:
+        deleted = await db.execute("DELETE FROM users")
+        await db.commit()
+        print("🗑️ Deleted all users")
+
+# Optional standalone runner
 if __name__ == "__main__":
-    seed_users()
+    asyncio.run(seed_users())
