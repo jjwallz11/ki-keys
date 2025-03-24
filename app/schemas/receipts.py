@@ -1,4 +1,3 @@
-# app/schemas/receipts.py
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
@@ -6,7 +5,6 @@ from datetime import datetime
 class ReceiptItemBase(BaseModel):
     key_type: str
     quantity: int
-    cost: float
 
 class ReceiptItemCreate(ReceiptItemBase):
     pass
@@ -16,13 +14,12 @@ class ReceiptItemResponse(ReceiptItemBase):
 
     class Config:
         model_config = {
-        "from_attributes": True
-    }
+            "from_attributes": True
+        }
 
 class ReceiptBase(BaseModel):
-    user_id: int
-    image_url: str
     processed: bool = False
+    source: Optional[str] = None 
 
 class ReceiptCreate(ReceiptBase):
     items: List[ReceiptItemCreate]
@@ -34,5 +31,5 @@ class ReceiptResponse(ReceiptBase):
 
     class Config:
         model_config = {
-        "from_attributes": True
-    }
+            "from_attributes": True
+        }

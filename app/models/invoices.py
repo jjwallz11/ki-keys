@@ -1,3 +1,4 @@
+# app/models/invoices.py
 from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey
 from sqlalchemy.orm import relationship
 from datetime import datetime

@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.utils.db import Base
 
@@ -15,3 +16,6 @@ class Vehicle(Base):
     manufacturer = Column(String(255), nullable=True)
     plant_country = Column(String(255), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    owner_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    owner = relationship("User", backref="vehicles")

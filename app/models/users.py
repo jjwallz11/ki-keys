@@ -1,3 +1,4 @@
+# app/models/users.py
 from sqlalchemy import Column, Integer, String, CheckConstraint
 from app.utils.db import Base
 
@@ -12,6 +13,7 @@ class User(Base):
     company = Column(String, nullable=True)     # Optional field for company name
     phone = Column(String, nullable=True)       # Optional field for phone
     role = Column(String, default="owner", nullable=False)  # 'owner', 'admin', etc.
+    aks_api_key = Column(String, nullable=True) 
     
     __table_args__ = (
         CheckConstraint(
@@ -19,3 +21,4 @@ class User(Base):
             name="admin_name_required"
         ),
     )
+    

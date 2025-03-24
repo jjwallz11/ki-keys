@@ -1,60 +1,50 @@
-# seeds/receipts.py
-
-from datetime import datetime
-from app.utils.db import SessionLocal
+# app/seeds/receipts.py
+import asyncio
+from datetime import datetime, timezone
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from app.utils.db import AsyncSessionLocal
 from app.models.receipts import Receipt
 from app.models.receipt_items import ReceiptItem
 
-def seed_receipts():
-    db = SessionLocal()
-    try:
-        # Check if any receipt exists
-        if db.query(Receipt).first():
+async def seed_receipts():
+    async with AsyncSessionLocal() as db:
+        result = await db.execute(select(Receipt))
+        if result.scalars().first():
             print("Receipts already seeded.")
             return
 
-        # Create a receipt (simulate a scanned receipt for a reorder)
         receipt = Receipt(
-            user_id=2,  # assuming locksmith user id is 2
-            image_url="https://example.com/receipt.jpg",  # sample image URL
-            processed=False,
-            created_at=datetime.utcnow()
+            user_id=2,  # assuming user 2 is a locksmith
+            created_at=datetime.now(timezone.utc),  # 🔁 updated
+            source="transponder"  # ✅ new field
         )
         db.add(receipt)
-        db.commit()
-        db.refresh(receipt)
-        
-        # Create receipt items
+        await db.commit()
+        await db.refresh(receipt)
+
         receipt_items_data = [
-            {"key_type": "Transponder", "quantity": 5, "cost": 75.00},
-            {"key_type": "Smart", "quantity": 3, "cost": 175.00},
-            {"key_type": "High-Security Transponder", "quantity": 4, "cost": 75.00},
+            {"key_type": "transponder", "quantity": 5},
+            {"key_type": "smart", "quantity": 3},
+            {"key_type": "high-security transponder", "quantity": 4},
         ]
+
         for item_data in receipt_items_data:
-            item = ReceiptItem(
+            db.add(ReceiptItem(
                 receipt_id=receipt.id,
                 key_type=item_data["key_type"],
-                quantity=item_data["quantity"],
-                cost=item_data["cost"]
-            )
-            db.add(item)
-        db.commit()
-        print("Seeded receipt data with receipt items.")
-    finally:
-        db.close()
-        
-        
+                quantity=item_data["quantity"]
+            ))
 
-def undo_receipts():
-    db = SessionLocal()
-    try:
-        deleted_items = db.query(ReceiptItem).delete()
-        deleted_receipts = db.query(Receipt).delete()
-        db.commit()
-        print(f"Deleted {deleted_items} receipt items and {deleted_receipts} receipts.")
-    finally:
-        db.close()
-        
-        
+        await db.commit()
+        print("✅ Seeded receipt with receipt items.")
+
+async def undo_receipts():
+    async with AsyncSessionLocal() as db:
+        await db.execute("DELETE FROM receipt_items")
+        await db.execute("DELETE FROM receipts")
+        await db.commit()
+        print("🗑️ Deleted all receipts and receipt items.")
+
 if __name__ == "__main__":
-    seed_receipts()
+    asyncio.run(seed_receipts())
