@@ -1,12 +1,10 @@
 .PHONY: seed undo run
 
-# Run all seed scripts
 seed:
-	PYTHONPATH=. python3 app/seeds/__init__.py all
+	PYTHONPATH=. python3 app/seeds/cli.py all
 
-# Undo all seeded data
 undo:
-	PYTHONPATH=. python3 app/seeds/__init__.py undo
+	PYTHONPATH=. python3 app/seeds/cli.py undo
 
 # Run FastAPI backend
 run:

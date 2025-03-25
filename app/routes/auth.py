@@ -1,25 +1,35 @@
-from fastapi import APIRouter, Depends
+# app/routes/auth.py
+
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
-from app.utils.auth import create_access_token, verify_password, get_current_user
-from app.utils.db import get_async_db
-from app.models.users import User
-from app.utils.errors import error_400, error_401
+from sqlalchemy import select
 from pydantic import BaseModel, EmailStr
 from jose import JWTError, jwt
+from passlib.context import CryptContext
+from datetime import datetime, timedelta
+
+from app.utils.db import get_async_db
+from app.models.users import User
 from app.config import settings
+from app.utils.errors import error_400, error_401
 
 router = APIRouter()
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/session/login")
+
 
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
 
+
 @router.post("/session/login")
 async def login(payload: LoginRequest, db: AsyncSession = Depends(get_async_db)):
     """ Authenticate user and return JWT token """
-    user = db.query(User).filter(User.email == payload.email).first()
+    result = await db.execute(select(User).where(User.email == payload.email))
+    user = result.scalars().first()
+
     if not user or not verify_password(payload.password, user.password_hash):
         error_400("Invalid credentials")
 
@@ -38,7 +48,6 @@ async def login(payload: LoginRequest, db: AsyncSession = Depends(get_async_db))
         }
     }
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/session/login")
 
 @router.get("/session/current")
 async def session_info_route(token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_async_db)):
@@ -50,7 +59,9 @@ async def session_info_route(token: str = Depends(oauth2_scheme), db: AsyncSessi
     except JWTError:
         error_401("Could not validate credentials")
 
-    user = db.query(User).filter(User.email == email).first()
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalars().first()
+
     if not user:
         error_401("User not found")
 
@@ -62,7 +73,65 @@ async def session_info_route(token: str = Depends(oauth2_scheme), db: AsyncSessi
         "role": user.role
     }
 
+
 @router.post("/session/logout")
 async def logout():
     """ Frontend should remove token upon logout request """
     return {"message": "Logout successful, please remove token on client side"}
+
+
+# AUTH UTILS
+
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+
+
+def hash_password(password):
+    return pwd_context.hash(password)
+
+
+def create_access_token(data: dict, expires_delta: timedelta = None):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))
+    to_encode.update({"exp": expire})
+
+    print("🕒 TOKEN EXPIRES AT:", expire.isoformat())  # Debug
+    return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+
+
+def decode_access_token(token: str):
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        return payload
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+
+async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_async_db)) -> User:
+    print("🔐 TOKEN RECEIVED:", token)
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        print("📦 DECODED PAYLOAD:", payload)
+        email: str = payload.get("sub")
+        if not email:
+            print("❌ No email in token!")
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token: missing subject")
+    except JWTError as e:
+        print("❌ JWT DECODE ERROR:", str(e))
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials")
+
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalars().first()
+
+    if not user:
+        print("❌ No user found with email:", email)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    print("✅ AUTHENTICATED USER:", user.email, user.role)
+    return user
+
+
+async def admin_or_locksmith(user: User = Depends(get_current_user)):
+    if user.role not in ["admin", "locksmith"]:
+        raise HTTPException(status_code=403, detail="Insufficient permissions")
+    return user

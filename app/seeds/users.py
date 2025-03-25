@@ -1,5 +1,6 @@
 # app/seeds/users.py
 import asyncio
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.utils.db import AsyncSessionLocal, Base, engine
@@ -7,19 +8,21 @@ from app.models.users import User
 from app.utils.auth import hash_password
 
 async def seed_users():
+    # Create the schema if it does not exist
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
+    # Now seed the users
     async with AsyncSessionLocal() as db:
         admin_email = "johnny@jjp3.io"
         locksmith_email = "leeno@pkaz.com"
         owner_email = "joel@rsa.com"
 
         # Check if users exist
-        existing = await db.execute(select(User).where(User.email.in_([
+        result = await db.execute(select(User).where(User.email.in_([
             admin_email, locksmith_email, owner_email
         ])))
-        existing_emails = {u.email for u in existing.scalars().all()}
+        existing_emails = {user.email for user in result.scalars().all()}
 
         if admin_email not in existing_emails:
             admin = User(
@@ -57,8 +60,9 @@ async def seed_users():
         await db.commit()
 
 async def undo_users():
+    # Clear all users from the database
     async with AsyncSessionLocal() as db:
-        deleted = await db.execute("DELETE FROM users")
+        await db.execute(text("DELETE FROM users"))
         await db.commit()
         print("🗑️ Deleted all users")
 

@@ -1,6 +1,7 @@
 # app/services/invoices.py
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.orm import joinedload
 from sqlalchemy import delete
 from datetime import datetime, timedelta
 
@@ -53,13 +54,17 @@ async def create_invoice(db: AsyncSession, invoice_data: InvoiceCreate, user_id:
     await db.refresh(invoice)
     return invoice
 
-async def get_invoice_by_id(db: AsyncSession, invoice_id: int) -> Invoice | None:
-    result = await db.execute(select(Invoice).where(Invoice.id == invoice_id))
-    return result.scalar_one_or_none()
+async def get_invoice_by_id(db: AsyncSession, invoice_id: int):
+    result = await db.execute(
+        select(Invoice)
+        .where(Invoice.id == invoice_id)
+        .options(joinedload(Invoice.items))
+    )
+    return result.unique().scalar_one_or_none()
 
 async def get_all_invoices(db: AsyncSession) -> list[Invoice]:
-    result = await db.execute(select(Invoice))
-    return result.scalars().all()
+    result = await db.execute(select(Invoice).options(joinedload(Invoice.items)))
+    return result.unique().scalars().all()
 
 async def update_invoice(db: AsyncSession, invoice: Invoice, invoice_data: InvoiceCreate) -> Invoice:
     new_date = invoice_data.date or invoice.date

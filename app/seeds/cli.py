@@ -1,4 +1,4 @@
-# app/seeds/__init__.py
+# app/seeds/cli.py
 import typer
 import asyncio
 from app.seeds.users import seed_users, undo_users
@@ -11,21 +11,25 @@ app = typer.Typer()
 
 @app.command()
 def all():
-    """
-    Seed all data into the database.
-    """
+    asyncio.run(_seed_all())
+
+async def _seed_all():
     if settings.ENVIRONMENT == 'production':
         typer.echo("Production environment detected. Undoing existing data before seeding...")
-        undo()
+        await _undo_all()
 
     typer.echo("Seeding users...")
-    asyncio.run(seed_users())
+    await seed_users()
+
     typer.echo("Seeding inventory...")
-    asyncio.run(seed_inventory())
+    await seed_inventory()
+
     typer.echo("Seeding invoices...")
-    asyncio.run(seed_invoices())
+    await seed_invoices()
+
     typer.echo("Seeding receipts...")
-    asyncio.run(seed_receipts())
+    await seed_receipts()
+
     typer.echo("✅ Seeding complete!")
 
 @app.command()
@@ -33,11 +37,14 @@ def undo():
     """
     Remove all seeded data.
     """
+    asyncio.run(_undo_all())
+
+async def _undo_all():
     typer.echo("Undoing seeded data...")
-    asyncio.run(undo_receipts())
-    asyncio.run(undo_invoices())
-    asyncio.run(undo_inventory())
-    asyncio.run(undo_users())
+    await undo_receipts()
+    await undo_invoices()
+    await undo_inventory()
+    await undo_users()
     typer.echo("🗑️ Undo complete!")
 
 if __name__ == "__main__":
