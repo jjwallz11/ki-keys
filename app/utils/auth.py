@@ -3,35 +3,36 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
 from app.config import settings
-from app.utils.db import get_db
+from app.utils.db import get_async_db
 from app.models.users import User
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# Secret key for encoding & decoding JWT
 ALGORITHM = "HS256"
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/session/login")
-
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
+
 def hash_password(password):
     return pwd_context.hash(password)
 
+
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))  # ✅ Use settings
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))
     to_encode.update({"exp": expire})
-
-    print("🕒 TOKEN EXPIRES AT:", expire.isoformat())  # Debug
+    print("🕒 TOKEN EXPIRES AT:", expire.isoformat())
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+
 
 def decode_access_token(token: str):
     try:
@@ -40,7 +41,11 @@ def decode_access_token(token: str):
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
+
+async def get_current_user(
+    token: str = Depends(oauth2_scheme),
+    db: AsyncSession = Depends(get_async_db)
+) -> User:
     print("🔐 TOKEN RECEIVED:", token)
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
@@ -53,13 +58,16 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         print("❌ JWT DECODE ERROR:", str(e))
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials")
 
-    user = db.query(User).filter(User.email == email).first()
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalar_one_or_none()
+
     if not user:
         print("❌ No user found with email:", email)
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
     print("✅ AUTHENTICATED USER:", user.email, user.role)
     return user
+
 
 def admin_or_locksmith(user: User = Depends(get_current_user)):
     if user.role not in ["admin", "locksmith"]:

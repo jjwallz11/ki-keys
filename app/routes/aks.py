@@ -21,6 +21,8 @@ async def store_aks_key(
 
 @router.get("/orders")
 async def get_aks_orders(
+    limit: int = 10,
+    offset: int = 0,
     db: AsyncSession = Depends(get_async_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -41,7 +43,16 @@ async def get_aks_orders(
             status_code=response.status_code, detail="Failed to fetch AKS orders"
         )
 
-    return response.json()
+    all_orders = response.json().get("data", [])
+
+    # Return a safe slice
+    paginated = all_orders[offset : offset + limit]
+    return {
+        "total": len(all_orders),
+        "limit": limit,
+        "offset": offset,
+        "orders": paginated
+    }
 
 @router.post("/import-latest")
 async def import_latest_aks_order(

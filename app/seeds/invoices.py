@@ -1,9 +1,11 @@
 # app/seeds/invoices.py
 import asyncio
 from datetime import datetime
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.utils.db import AsyncSessionLocal
+from app.models.users import User
 from app.models.invoices import Invoice
 from app.models.invoice_items import InvoiceItem
 
@@ -14,9 +16,15 @@ async def seed_invoices():
             print("Invoices already seeded.")
             return
 
+        user_result = await db.execute(select(User))
+        user = user_result.scalars().first()
+        if not user:
+            print("❌ No users found. Please seed users first.")
+            return
+
         invoice = Invoice(
             invoice_number="3916",
-            user_id=2,
+            user_id=user.id,
             bill_to="Repossession Services of AZ, LLC",
             date=datetime(2024, 3, 4),
             terms="Net 15",
@@ -53,8 +61,8 @@ async def seed_invoices():
 
 async def undo_invoices():
     async with AsyncSessionLocal() as db:
-        await db.execute("DELETE FROM invoice_items")
-        await db.execute("DELETE FROM invoices")
+        await db.execute(text("DELETE FROM invoice_items"))
+        await db.execute(text("DELETE FROM invoices"))
         await db.commit()
         print("🗑️ Deleted all invoice items and invoices.")
 
