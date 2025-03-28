@@ -1,8 +1,9 @@
+# app/main.py
 from fastapi import FastAPI
-from app.routes import router
-from app.config import settings
+from routes import router
+from config import settings
 import logging
-from app.utils.db import engine, Base
+from utils.db import engine, Base
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Patriotic Keys API", debug=settings.DEBUG)

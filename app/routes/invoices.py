@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from app.utils.db import get_async_db
-from app.utils.auth import get_current_user
-from app.models.users import User
-from app.models.invoices import Invoice
-from app.schemas.invoices import InvoiceCreate, InvoiceResponse
-from app.services.invoices import (
+from utils.db import get_async_db
+from utils.auth import get_current_user
+from models.users import User
+from models.invoices import Invoice
+from schemas.invoices import InvoiceCreate, InvoiceResponse
+from services.invoices import (
     create_invoice,
     get_invoice_by_id,
     get_all_invoices,

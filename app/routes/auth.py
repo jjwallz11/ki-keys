@@ -9,10 +9,10 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 
-from app.utils.db import get_async_db
-from app.models.users import User
-from app.config import settings
-from app.utils.errors import error_400, error_401
+from utils.db import get_async_db
+from models.users import User
+from config import settings
+from utils.errors import error_400, error_401
 
 router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

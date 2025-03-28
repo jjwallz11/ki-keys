@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from app.utils.db import Base
+from utils.db import Base
 
 class Vehicle(Base):
     __tablename__ = "vehicles"

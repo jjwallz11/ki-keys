@@ -1,5 +1,6 @@
 # app/schemas/inventory.py
 from pydantic import BaseModel
+from typing import Optional
 
 class InventoryBase(BaseModel):
     key_type: str
@@ -10,8 +11,8 @@ class InventoryCreate(InventoryBase):
     added_by: int
 
 class InventoryUpdate(BaseModel):
-    quantity: int | None = None
-    threshold: int | None = None
+    quantity: Optional[int] = None
+    threshold: Optional[int] = None
 
 class InventoryResponse(InventoryBase):
     id: int

@@ -3,9 +3,9 @@ import asyncio
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from app.utils.db import AsyncSessionLocal, Base, engine
-from app.models.users import User
-from app.utils.auth import hash_password
+from utils.db import AsyncSessionLocal, Base, engine
+from models.users import User
+from utils.auth import hash_password
 
 async def seed_users():
     # Create the schema if it does not exist

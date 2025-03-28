@@ -5,9 +5,9 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy import delete
 from datetime import datetime, timedelta
 
-from app.models.invoices import Invoice
-from app.models.invoice_items import InvoiceItem
-from app.schemas.invoices import InvoiceCreate
+from models.invoices import Invoice
+from models.invoice_items import InvoiceItem
+from schemas.invoices import InvoiceCreate
 
 async def generate_invoice_number(db: AsyncSession) -> str:
     result = await db.execute(select(Invoice).order_by(Invoice.id.desc()))

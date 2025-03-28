@@ -1,7 +1,7 @@
 # app/models/inventory.py
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from datetime import datetime
-from app.utils.db import Base
+from utils.db import Base
 
 class Inventory(Base):
     __tablename__ = "inventory"

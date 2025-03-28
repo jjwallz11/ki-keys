@@ -4,10 +4,10 @@ from datetime import datetime
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from app.utils.db import AsyncSessionLocal
-from app.models.users import User
-from app.models.invoices import Invoice
-from app.models.invoice_items import InvoiceItem
+from utils.db import AsyncSessionLocal
+from models.users import User
+from models.invoices import Invoice
+from models.invoice_items import InvoiceItem
 
 async def seed_invoices():
     async with AsyncSessionLocal() as db:

@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from app.utils.db import get_async_db
-from app.utils.errors import error_400, error_401, error_403, error_404
-from app.models.users import User
-from app.services.users import create_user, update_user, delete_user, get_user_by_id
-from app.schemas.users import UserCreate, UserResponse, UserUpdate
-from app.utils.auth import get_current_user
+from utils.db import get_async_db
+from utils.errors import error_400, error_401, error_403, error_404
+from models.users import User
+from services.users import create_user, update_user, delete_user, get_user_by_id
+from schemas.users import UserCreate, UserResponse, UserUpdate
+from utils.auth import get_current_user
 from typing import List
 
 router = APIRouter()

@@ -1,7 +1,7 @@
 # app/utils/db.py
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import declarative_base
-from app.config import settings
+from config import settings
 
 # Convert sync-style DATABASE_URL to asyncpg-compatible format
 DATABASE_URL = settings.DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://")

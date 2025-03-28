@@ -2,9 +2,9 @@ from typing import List, Dict
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from fastapi import HTTPException
-from app.models.users import User
-from app.models.receipts import Receipt
-from app.models.receipt_items import ReceiptItem
+from models.users import User
+from models.receipts import Receipt
+from models.receipt_items import ReceiptItem
 from datetime import datetime, timezone
 import httpx
 

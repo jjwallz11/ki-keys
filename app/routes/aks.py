@@ -1,10 +1,10 @@
 # app/routes/aks.py
 from fastapi import APIRouter, Depends, HTTPException, Body
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.utils.db import get_async_db
-from app.models.users import User
-from app.utils.auth import get_current_user
-from app.services.aks import import_aks_receipt
+from utils.db import get_async_db
+from models.users import User
+from utils.auth import get_current_user
+from services.aks import import_aks_receipt
 import httpx
 
 router = APIRouter(prefix="/api/aks", tags=["aks"])

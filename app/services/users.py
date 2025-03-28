@@ -1,9 +1,10 @@
 # app/services/users.py
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from app.models.users import User
-from app.schemas.users import UserCreate, UserUpdate
-from app.utils.auth import hash_password
+from models.users import User
+from schemas.users import UserCreate, UserUpdate
+from utils.auth import hash_password
+from typing import Optional
 
 async def create_user(db: AsyncSession, user_data: UserCreate) -> User:
     hashed_pw = hash_password(user_data.password)
@@ -21,7 +22,7 @@ async def create_user(db: AsyncSession, user_data: UserCreate) -> User:
     await db.refresh(user)
     return user
 
-async def get_user_by_id(db: AsyncSession, user_id: int) -> User | None:
+async def get_user_by_id(db: AsyncSession, user_id: int) -> Optional[User]:
     result = await db.execute(select(User).where(User.id == user_id))
     return result.scalar_one_or_none()
 

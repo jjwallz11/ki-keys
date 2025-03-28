@@ -2,7 +2,7 @@
 from sqlalchemy import Column, Integer, Boolean, DateTime, ForeignKey, String
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
-from app.utils.db import Base
+from utils.db import Base
 
 class Receipt(Base):
     __tablename__ = "receipts"
