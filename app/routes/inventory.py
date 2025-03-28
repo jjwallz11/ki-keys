@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from app.utils.db import get_async_db
-from app.utils.auth import admin_or_locksmith, get_current_user
-from app.models.inventory import Inventory
-from app.models.users import User
-from app.schemas.inventory import InventoryCreate, InventoryUpdate, InventoryResponse
+from utils.db import get_async_db
+from utils.auth import admin_or_locksmith, get_current_user
+from models.inventory import Inventory
+from models.users import User
+from schemas.inventory import InventoryCreate, InventoryUpdate, InventoryResponse
 from typing import List
 from pydantic import BaseModel
 

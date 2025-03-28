@@ -1,7 +1,7 @@
 # app/models/receipt_items.py
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-from app.utils.db import Base
+from utils.db import Base
 
 class ReceiptItem(Base):
     __tablename__ = "receipt_items"

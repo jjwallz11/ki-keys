@@ -4,10 +4,10 @@ from datetime import datetime, timezone
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from app.utils.db import AsyncSessionLocal
-from app.models.users import User
-from app.models.receipts import Receipt
-from app.models.receipt_items import ReceiptItem
+from utils.db import AsyncSessionLocal
+from models.users import User
+from models.receipts import Receipt
+from models.receipt_items import ReceiptItem
 
 async def seed_receipts():
     async with AsyncSessionLocal() as db:

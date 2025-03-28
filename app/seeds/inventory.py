@@ -2,9 +2,9 @@ import asyncio
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from app.utils.db import AsyncSessionLocal
-from app.models.inventory import Inventory
-from app.models.users import User  # Needed to fetch user ID
+from utils.db import AsyncSessionLocal
+from models.inventory import Inventory
+from models.users import User  # Needed to fetch user ID
 
 async def seed_inventory():
     async with AsyncSessionLocal() as db:

@@ -5,9 +5,9 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from app.config import settings
-from app.utils.db import get_async_db
-from app.models.users import User
+from config import settings
+from utils.db import get_async_db
+from models.users import User
 import os
 from dotenv import load_dotenv
 

@@ -1,8 +1,9 @@
 # app/services/inventory.py
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from app.models.inventory import Inventory
-from app.schemas.inventory import InventoryCreate, InventoryUpdate
+from models.inventory import Inventory
+from schemas.inventory import InventoryCreate, InventoryUpdate
+from typing import Optional
 
 async def create_inventory(db: AsyncSession, inventory_data: InventoryCreate) -> Inventory:
     new_inventory = Inventory(
@@ -20,7 +21,7 @@ async def get_all_inventory(db: AsyncSession) -> list[Inventory]:
     result = await db.execute(select(Inventory))
     return result.scalars().all()
 
-async def update_inventory(db: AsyncSession, item_id: int, inventory_data: InventoryUpdate) -> Inventory | None:
+async def update_inventory(db: AsyncSession, item_id: int, inventory_data: InventoryUpdate) -> Optional[Inventory]:
     result = await db.execute(select(Inventory).where(Inventory.id == item_id))
     inventory_item = result.scalar_one_or_none()
     if not inventory_item:
@@ -35,7 +36,7 @@ async def update_inventory(db: AsyncSession, item_id: int, inventory_data: Inven
     await db.refresh(inventory_item)
     return inventory_item
 
-async def delete_inventory(db: AsyncSession, item_id: int) -> Inventory | None:
+async def delete_inventory(db: AsyncSession, item_id: int) -> Optional[Inventory]:
     result = await db.execute(select(Inventory).where(Inventory.id == item_id))
     inventory_item = result.scalar_one_or_none()
     if not inventory_item:

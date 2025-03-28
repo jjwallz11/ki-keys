@@ -1,9 +1,9 @@
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.utils.db import get_async_db
-from app.utils.auth import get_current_user
-from app.models.users import User
-from app.services.receipts import extract_keys_from_pdf  # this should remain async
+from utils.db import get_async_db
+from utils.auth import get_current_user
+from models.users import User
+from services.receipts import extract_keys_from_pdf  # this should remain async
 
 router = APIRouter()
 

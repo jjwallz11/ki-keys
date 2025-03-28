@@ -1,7 +1,7 @@
 # app/models/invoice_items.py
 from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import relationship
-from app.utils.db import Base
+from utils.db import Base
 
 class InvoiceItem(Base):
     __tablename__ = "invoice_items"

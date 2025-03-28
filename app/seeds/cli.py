@@ -1,11 +1,11 @@
 # app/seeds/cli.py
 import typer
 import asyncio
-from app.seeds.users import seed_users, undo_users
-from app.seeds.inventory import seed_inventory, undo_inventory
-from app.seeds.invoices import seed_invoices, undo_invoices
-from app.seeds.receipts import seed_receipts, undo_receipts
-from app.config import settings
+from seeds.users import seed_users, undo_users
+from seeds.inventory import seed_inventory, undo_inventory
+from seeds.invoices import seed_invoices, undo_invoices
+from seeds.receipts import seed_receipts, undo_receipts
+from config import settings
 
 app = typer.Typer()
 
