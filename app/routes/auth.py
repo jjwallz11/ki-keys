@@ -7,12 +7,15 @@ from sqlalchemy import select
 from pydantic import BaseModel, EmailStr
 from jose import JWTError, jwt
 from passlib.context import CryptContext
+from passlib.hash import bcrypt
 from datetime import datetime, timedelta
 
 from utils.db import get_async_db
 from models.users import User
 from config import settings
 from utils.errors import error_400, error_401
+from utils.tokens import create_reset_token, verify_reset_token
+from utils.email import send_password_reset_email
 
 router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -135,3 +138,41 @@ async def admin_or_locksmith(user: User = Depends(get_current_user)):
     if user.role not in ["admin", "locksmith"]:
         raise HTTPException(status_code=403, detail="Insufficient permissions")
     return user
+
+
+class PasswordResetRequest(BaseModel):
+    email: EmailStr
+
+@router.post("/session/forgot-password", status_code=status.HTTP_204_NO_CONTENT)
+async def forgot_password(data: PasswordResetRequest, db: AsyncSession = Depends(get_async_db)):
+    result = await db.execute(
+        db.select(User).where(User.email == data.email)
+    )
+    user = result.scalar_one_or_none()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="No user with that email")
+
+    token = create_reset_token(user.id)
+    await send_password_reset_email(user.email, token)
+
+
+class PasswordReset(BaseModel):
+    token: str
+    new_password: str
+
+@router.post("/session/reset-password", status_code=status.HTTP_204_NO_CONTENT)
+async def reset_password(data: PasswordReset, db: AsyncSession = Depends(get_async_db)):
+    user_id = verify_reset_token(data.token)
+
+    if not user_id:
+        raise HTTPException(status_code=400, detail="Invalid or expired token")
+
+    result = await db.execute(select(User).where(User.id == user_id))
+    user = result.scalar_one_or_none()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user.hashed_password = bcrypt.hash(data.new_password)
+    await db.commit()

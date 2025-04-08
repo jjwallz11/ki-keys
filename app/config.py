@@ -3,6 +3,7 @@
 from pydantic_settings import BaseSettings
 from pydantic import ConfigDict
 from pathlib import Path
+from dotenv import load_dotenv
 import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -10,6 +11,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Detect environment
 ENV = os.getenv("ENVIRONMENT", "development")
 ENV_FILE = BASE_DIR / f".env.{ENV}" if ENV != "development" else BASE_DIR / ".env"
+
+# ✅ Explicitly load the .env file before Pydantic initializes
+load_dotenv(dotenv_path=ENV_FILE)
 
 class Settings(BaseSettings):
     DATABASE_URL: str
@@ -20,10 +24,6 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = ENV
     SCHEMA: str = "public"
 
-    model_config = ConfigDict(
-        ENV_FILE=ENV_FILE,
-        ENV_FILE_encoding="utf-8",
-        extra="allow"
-    )
+    model_config = ConfigDict(extra="allow")  # ENV loading handled above
 
 settings = Settings()
