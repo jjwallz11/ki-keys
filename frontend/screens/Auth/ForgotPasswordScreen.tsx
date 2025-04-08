@@ -8,8 +8,8 @@ import {
   Platform,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {requestPasswordReset} from '../../services/api/auth'; // Adjust if needed
-import {logError} from '../../utils/log'; // You already have this!
+import {requestPasswordReset} from '../../services/api/auth';
+import {logError} from '../../utils/log';
 
 export default function ForgotPasswordScreen() {
   const navigation = useNavigation();
