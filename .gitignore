@@ -5,9 +5,6 @@ build
 *.db
 .venv
 
-.next/
-frontend/.next/
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -183,6 +180,6 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-pushCommand.md
+commands.md
 backendBrowserTests.md
 Makefile
