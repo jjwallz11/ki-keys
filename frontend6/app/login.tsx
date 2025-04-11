@@ -49,7 +49,7 @@ export default function LoginScreen() {
 
       <TextInput
         placeholder="Email"
-        placeholderTextColor={textColor}
+        placeholderTextColor={"gray"}
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
@@ -57,21 +57,21 @@ export default function LoginScreen() {
         style={{
           borderWidth: 1,
           padding: 10,
-          color: textColor,
+          color: "black",
           marginBottom: 10,
         }}
       />
 
       <TextInput
         placeholder="Password"
-        placeholderTextColor={textColor}
+        placeholderTextColor={"gray"}
         value={password}
         onChangeText={setPassword}
         secureTextEntry
         style={{
           borderWidth: 1,
           padding: 10,
-          color: textColor,
+          color: "black",
           marginBottom: 10,
         }}
       />

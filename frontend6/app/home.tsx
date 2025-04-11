@@ -1,12 +1,10 @@
-// frontend/app/index.tsx
+// frontend/app/home.tsx
 import React, { useState } from "react";
-
-import { View, Text, TouchableOpacity } from "react-native";
-
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 
 import UploadPDF from "@/components/UploadPDF";
-import { useThemeColor } from "@/hooks/useThemeColor";
+import Layout from "@/components/Layout";
 import { logout } from "@/utils/logout";
 
 const tiles = [
@@ -20,44 +18,64 @@ const tiles = [
 export default function HomeScreen() {
   const router = useRouter();
   const [showUploadPDF, setShowUploadPDF] = useState(false);
-  const textColor = useThemeColor({}, "text");
-  const bgColor = useThemeColor({}, "background");
 
   return (
-    <View style={{ flex: 1, padding: 20, backgroundColor: bgColor }}>
-      <Text style={{ color: textColor, fontSize: 24, marginBottom: 10 }}>
-        Patriotic Keys
-      </Text>
-      <Text style={{ color: textColor, fontSize: 20, marginBottom: 20 }}>
-        Ready to Work?
-      </Text>
+    <Layout>
+      <View style={styles.container}>
+        <Text style={styles.title}>Ready to Work?</Text>
 
-      {!showUploadPDF ? (
-        <View>
-          <TouchableOpacity onPress={() => setShowUploadPDF(true)}>
-            <Text style={{ color: textColor, fontSize: 18 }}>📦 Upload Inventory PDF</Text>
-          </TouchableOpacity>
-
-          {tiles.map((tile) => (
-            <TouchableOpacity key={tile.label} onPress={() => router.push(tile.route)}>
-              <Text style={{ color: textColor, fontSize: 18 }}>
-                {tile.emoji} {tile.label.toUpperCase()}
-              </Text>
+        {!showUploadPDF ? (
+          <View style={styles.tileSection}>
+            <TouchableOpacity onPress={() => setShowUploadPDF(true)} style={styles.tile}>
+              <Text style={styles.tileText}>📦 Upload Inventory PDF</Text>
             </TouchableOpacity>
-          ))}
-        </View>
-      ) : (
-        <View>
-          <UploadPDF />
-          <TouchableOpacity onPress={() => setShowUploadPDF(false)}>
-            <Text style={{ color: textColor, fontSize: 18, marginTop: 10 }}>Cancel</Text>
-          </TouchableOpacity>
-        </View>
-      )}
 
-      <TouchableOpacity onPress={logout}>
-        <Text style={{ color: textColor, marginTop: 40 }}>Logout</Text>
-      </TouchableOpacity>
-    </View>
+            {tiles.map((tile) => (
+              <TouchableOpacity key={tile.label} onPress={() => router.push(tile.route)} style={styles.tile}>
+                <Text style={styles.tileText}>
+                  {tile.emoji} {tile.label.toUpperCase()}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        ) : (
+          <View>
+            <UploadPDF />
+            <TouchableOpacity onPress={() => setShowUploadPDF(false)}>
+              <Text style={styles.cancel}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
+    </Layout>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 16,
+  },
+  title: {
+    color: "#072460",
+    fontSize: 20,
+    marginBottom: 16,
+    fontWeight: "600",
+  },
+  tileSection: {
+    gap: 12,
+  },
+  tile: {
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
+  tileText: {
+    fontSize: 16,
+    color: "#000",
+  },
+  cancel: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#AE2335",
+  },
+});
