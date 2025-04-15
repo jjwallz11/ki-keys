@@ -21,7 +21,7 @@ export default function LogoOnlyLayout({ children }: Props) {
     >
       <View style={styles.modal}>
         <Image
-          source={{ uri: "/pkLogo.png" }}
+          source={require("../public/pkLogo.png")}
           style={styles.logo}
         />
         <View style={styles.content}>{children}</View>
