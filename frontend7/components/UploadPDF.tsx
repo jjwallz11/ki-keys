@@ -5,7 +5,7 @@ import { View, Text, Button, Alert } from "react-native";
 
 import * as DocumentPicker from "expo-document-picker";
 
-import { useThemeColor } from "@/hooks/useThemeColor";
+import { COLORS } from "@/constants/Colors";
 import { apiFetch } from "@/utils/api";
 
 export default function UploadPDF() {
@@ -13,7 +13,7 @@ export default function UploadPDF() {
   const [parsedData, setParsedData] = useState<{ key_type: string; quantity: number }[] | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const textColor = useThemeColor({}, "text");
+  const textColor = COLORS({}, "text");
 
   const handlePickDocument = async () => {
     const result = await DocumentPicker.getDocumentAsync({

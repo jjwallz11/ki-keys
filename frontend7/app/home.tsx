@@ -1,15 +1,12 @@
-// frontend/app/home.tsx
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React from "react";
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
-
-import UploadPDF from "../components/UploadPDF";
-import Layout from "../components/Layout";
-import { logout } from "@/utils/logout";
+import Layout from "@/components/Layout";
 
 const tiles = [
+  { label: "Inventory", emoji: "🔑 📄 💍", route: "/inventory" },
   { label: "Invoices", emoji: "📄📄📄", route: "/invoices" },
-  { label: "Inventory", emoji: "🔑🔑🔑", route: "/inventory" },
+  { label: "Keys", emoji: "🔑🔑🔑", route: "/upload-pdf" },
   { label: "Vin Scan", emoji: "🚗🚙🚐", route: "/vinScan" },
   { label: "Companies", emoji: "🧑🏽‍💼🏢🚚", route: "/companies" },
   { label: "Profile", emoji: "👤", route: "/profile" },
@@ -17,65 +14,62 @@ const tiles = [
 
 export default function HomeScreen() {
   const router = useRouter();
-  const [showUploadPDF, setShowUploadPDF] = useState(false);
 
   return (
     <Layout>
-      <View style={styles.container}>
-        <Text style={styles.title}>Ready to Work?</Text>
-
-        {!showUploadPDF ? (
-          <View style={styles.tileSection}>
-            <TouchableOpacity onPress={() => setShowUploadPDF(true)} style={styles.tile}>
-              <Text style={styles.tileText}>📦 Upload Inventory PDF</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.grid}>
+          {tiles.map((tile) => (
+            <TouchableOpacity
+              key={tile.label}
+              onPress={() => router.push(tile.route)}
+              style={styles.tile}
+            >
+              <Text style={styles.label}>{tile.label.toUpperCase()}</Text>
+              <Text style={styles.emoji}>{tile.emoji}</Text>
             </TouchableOpacity>
-
-            {tiles.map((tile) => (
-              <TouchableOpacity key={tile.label} onPress={() => router.push(tile.route)} style={styles.tile}>
-                <Text style={styles.tileText}>
-                  {tile.emoji} {tile.label.toUpperCase()}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        ) : (
-          <View>
-            <UploadPDF />
-            <TouchableOpacity onPress={() => setShowUploadPDF(false)}>
-              <Text style={styles.cancel}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </View>
+          ))}
+        </View>
+      </ScrollView>
     </Layout>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 32,
+    paddingHorizontal: 16,
   },
-  title: {
-    color: "#072460",
-    fontSize: 20,
-    marginBottom: 16,
-    fontWeight: "600",
-  },
-  tileSection: {
-    gap: 12,
+  grid: {
+    width: "100%",
+    maxWidth: 900,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    rowGap: 24,
+    columnGap: 24,
   },
   tile: {
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    backgroundColor: "#e0e0e0",
+    borderRadius: 12,
+    width: Dimensions.get("window").width > 768 ? 260 : "45%",
+    aspectRatio: 1.2,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 16,
   },
-  tileText: {
+  label: {
     fontSize: 16,
-    color: "#000",
+    fontWeight: "bold",
+    color: "#072460",
+    marginBottom: 12,
+    textAlign: "center",
   },
-  cancel: {
-    marginTop: 10,
-    fontSize: 16,
-    color: "#AE2335",
+  emoji: {
+    fontSize: 28,
+    textAlign: "center",
   },
 });

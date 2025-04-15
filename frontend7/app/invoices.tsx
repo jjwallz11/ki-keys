@@ -1,9 +1,15 @@
-// frontend/app/invoices.tsx
 import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
+  StyleSheet,
+} from "react-native";
 
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from "react-native";
-
-import { useThemeColor } from "@/hooks/useThemeColor";
+import { COLORS } from "@/constants/Colors";
+import Layout from "@/components/Layout";
 import { apiFetch } from "@/utils/api";
 
 export default function InvoicesScreen() {
@@ -11,16 +17,11 @@ export default function InvoicesScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const textColor = useThemeColor({}, "text");
-  const bgColor = useThemeColor({}, "background");
-
   useEffect(() => {
     const fetchInvoices = async () => {
       setLoading(true);
       try {
-        const data = await apiFetch("http://192.168.1.89:8000/api/invoices", {
-          method: "GET",
-        });
+        const data = await apiFetch("/api/invoices");
         setInvoices(data);
       } catch (err) {
         setError("Failed to load invoices");
@@ -33,41 +34,64 @@ export default function InvoicesScreen() {
     fetchInvoices();
   }, []);
 
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: bgColor }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: bgColor }}>
-        <Text style={{ color: textColor }}>{error}</Text>
-      </View>
-    );
-  }
-
-  return (
-    <View style={{ flex: 1, backgroundColor: bgColor }}>
-      <FlatList
-        data={invoices}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View>
-            <Text style={{ color: textColor }}>
-              Invoice #{item.number} - {item.date}
-            </Text>
-            <Text style={{ color: textColor }}>
-              Total Due: ${item.total_due}
-            </Text>
-            <TouchableOpacity>
-              <Text style={{ color: textColor }}>View Details</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      />
+  const renderItem = ({ item }: { item: any }) => (
+    <View style={styles.itemContainer}>
+      <Text style={[styles.itemText, { color: COLORS.text }]}>
+        Invoice #{item.number} - {item.date}
+      </Text>
+      <Text style={[styles.subText, { color: COLORS.textSecondary }]}>
+        Total Due: ${item.total_due}
+      </Text>
+      <TouchableOpacity>
+        <Text style={[styles.viewLink, { color: COLORS.textSecondary }]}>View Details</Text>
+      </TouchableOpacity>
     </View>
   );
+
+  return (
+    <Layout>
+      <View style={[styles.container, { backgroundColor: COLORS.background }]}>
+        {loading ? (
+          <ActivityIndicator size="large" />
+        ) : error ? (
+          <Text style={[styles.errorText, { color: COLORS.text }]}>{error}</Text>
+        ) : (
+          <FlatList
+            data={invoices}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItem}
+            contentContainerStyle={styles.listContent}
+          />
+        )}
+      </View>
+    </Layout>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 16 },
+  listContent: { paddingBottom: 20 },
+  itemContainer: {
+    marginBottom: 20,
+    padding: 16,
+    borderRadius: 12,
+    backgroundColor: COLORS.tile,
+  },
+  itemText: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  subText: {
+    marginTop: 4,
+    fontSize: 14,
+  },
+  viewLink: {
+    marginTop: 8,
+    fontSize: 14,
+    textDecorationLine: "underline",
+  },
+  errorText: {
+    fontSize: 16,
+    textAlign: "center",
+  },
+});

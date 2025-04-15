@@ -1,16 +1,20 @@
+// frontend/app/upload-pdf.tsx
 import React from "react";
-
-import { View } from "react-native";
-
+import { View, StyleSheet } from "react-native";
 import UploadPDF from "@/components/UploadPDF";
-import { useThemeColor } from "@/hooks/useThemeColor";
+import { COLORS } from "@/constants/Colors";
+import Layout from "@/components/Layout";
 
 export default function UploadPDFScreen() {
-  const bgColor = useThemeColor({}, "background");
-
   return (
-    <View style={{ flex: 1, padding: 20, backgroundColor: bgColor }}>
-      <UploadPDF />
-    </View>
+    <Layout>
+      <View style={[styles.container, { backgroundColor: COLORS.background }]}>
+        <UploadPDF />
+      </View>
+    </Layout>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 20 },
+});

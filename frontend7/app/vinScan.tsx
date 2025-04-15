@@ -1,12 +1,19 @@
 // frontend/app/vinScan.tsx
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, Button, Alert, TouchableOpacity, StyleSheet } from "react-native";
-// Import Camera and the new event type from expo-camera:
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  Alert,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 import { Camera, BarcodeScanningResult } from "expo-camera";
-import { useThemeColor } from "@/hooks/useThemeColor";
+import { COLORS } from "@/constants/Colors";
+import Layout from "@/components/Layout";
 import { apiFetch } from "@/utils/api";
 
-// Uncomment and use this if TypeScript still complains about Camera as a JSX element:
 const ExpoCamera = Camera as unknown as React.ComponentType<any>;
 
 export default function VinScanScreen() {
@@ -17,10 +24,6 @@ export default function VinScanScreen() {
   const [loading, setLoading] = useState(false);
   const [vehicle, setVehicle] = useState<{ year: number; make: string; model: string } | null>(null);
 
-  const textColor = useThemeColor({}, "text");
-  const bgColor = useThemeColor({}, "background");
-
-  // Request camera permissions on mount.
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
@@ -28,7 +31,6 @@ export default function VinScanScreen() {
     })();
   }, []);
 
-  // Reset the scanned state after a short delay.
   useEffect(() => {
     if (scanned) {
       const timeout = setTimeout(() => setScanned(false), 3000);
@@ -36,7 +38,6 @@ export default function VinScanScreen() {
     }
   }, [scanned]);
 
-  // Use the correct event type for the callback.
   const handleBarCodeScanned = ({ data }: BarcodeScanningResult) => {
     setScanned(true);
     setShowScanner(false);
@@ -67,57 +68,57 @@ export default function VinScanScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: bgColor }]}>
-      <Text style={[styles.title, { color: textColor }]}>Scan or Enter VIN</Text>
+    <Layout>
+      <View style={[styles.container, { backgroundColor: COLORS.background }]}>
+        <Text style={[styles.title, { color: COLORS.text }]}>Scan or Enter VIN</Text>
 
-      {showScanner && hasPermission ? (
-        // If TypeScript complains about <Camera>, try replacing it with <ExpoCamera> as shown above.
-        <ExpoCamera
-          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-          // Use the new prop with string identifiers for barcode types.
-          barcodeScannerSettings={{
-            barcodeTypes: ["code128", "code39"],
-          }}
-          style={styles.camera}
-        />
-      ) : (
-        <>
-          <TextInput
-            placeholder="Enter VIN manually"
-            placeholderTextColor={textColor}
-            value={manualVIN}
-            onChangeText={setManualVIN}
-            autoCapitalize="characters"
-            style={[styles.input, { color: textColor, borderColor: textColor }]}
-          />
-          <Button
-            title={loading ? "Decoding..." : "Submit VIN"}
-            onPress={() => decodeVIN(manualVIN)}
-            disabled={loading}
-          />
-          <TouchableOpacity
-            onPress={() => {
-              setShowScanner(true);
-              setScanned(false);
+        {showScanner && hasPermission ? (
+          <ExpoCamera
+            onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+            barcodeScannerSettings={{
+              barcodeTypes: ["code128", "code39"],
             }}
-            style={styles.scanButton}
-          >
-            <Text style={{ color: textColor, textAlign: "center" }}>
-              📷 Scan VIN with Camera
-            </Text>
-          </TouchableOpacity>
-
-          {vehicle && (
-            <View style={styles.vehicleInfo}>
-              <Text style={[styles.infoTitle, { color: textColor }]}>Vehicle Info:</Text>
-              <Text style={{ color: textColor }}>
-                {vehicle.year} {vehicle.make} {vehicle.model}
+            style={styles.camera}
+          />
+        ) : (
+          <>
+            <TextInput
+              placeholder="Enter VIN manually"
+              placeholderTextColor={COLORS.textSecondary}
+              value={manualVIN}
+              onChangeText={setManualVIN}
+              autoCapitalize="characters"
+              style={[styles.input, { color: COLORS.text, borderColor: COLORS.text }]}
+            />
+            <Button
+              title={loading ? "Decoding..." : "Submit VIN"}
+              onPress={() => decodeVIN(manualVIN)}
+              disabled={loading}
+            />
+            <TouchableOpacity
+              onPress={() => {
+                setShowScanner(true);
+                setScanned(false);
+              }}
+              style={styles.scanButton}
+            >
+              <Text style={{ color: COLORS.text, textAlign: "center" }}>
+                📷 Scan VIN with Camera
               </Text>
-            </View>
-          )}
-        </>
-      )}
-    </View>
+            </TouchableOpacity>
+
+            {vehicle && (
+              <View style={styles.vehicleInfo}>
+                <Text style={[styles.infoTitle, { color: COLORS.text }]}>Vehicle Info:</Text>
+                <Text style={{ color: COLORS.text }}>
+                  {vehicle.year} {vehicle.make} {vehicle.model}
+                </Text>
+              </View>
+            )}
+          </>
+        )}
+      </View>
+    </Layout>
   );
 }
 

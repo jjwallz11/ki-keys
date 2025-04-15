@@ -9,7 +9,7 @@ const navLinks = [
   { title: "Home", route: "/home" },
   { title: "Inventory", route: "/inventory" },
   { title: "Invoices", route: "/invoices" },
-  { title: "Vehicles", route: "/vinScan" },
+  { title: "Vin Scan", route: "/vinScan" },
   { title: "Companies", route: "/companies" },
 ] as const;
 
@@ -22,7 +22,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Image source={{ uri: "/pkLogo.png" }} style={styles.logo} />
+          <Image source={require("../public/pkLogo.png")} style={styles.logo} />
           <Text style={styles.appText}>The App*</Text>
         </View>
         <TouchableOpacity style={styles.logoutSection} onPress={logout}>
@@ -59,7 +59,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <Text style={styles.footerText}>About Us</Text>
           <Text style={styles.footerText}>Contact</Text>
         </View>
-        <Image source={{ uri: "/jp3.png" }} style={styles.signature} />
+        <Image source={require("../public/jp3.png")} style={styles.signature} />
       </View>
     </View>
   );

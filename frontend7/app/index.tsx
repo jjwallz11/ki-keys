@@ -3,12 +3,10 @@ import React, { useEffect, useState } from "react";
 import { View, Button, Text, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useThemeColor } from "@/hooks/useThemeColor";
+import { COLORS } from "@/constants/Colors";
 
 export default function HomeScreen() {
-  const router = useRouter();
-  const textColor = useThemeColor({}, "text");
-  const bgColor = useThemeColor({}, "background");
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -40,10 +38,10 @@ export default function HomeScreen() {
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: bgColor,
+          backgroundColor: COLORS.background,
         }}
       >
-        <ActivityIndicator size="large" color={textColor} />
+        <ActivityIndicator size="large" color={COLORS.text} />
       </View>
     );
   }
@@ -55,10 +53,10 @@ export default function HomeScreen() {
         justifyContent: "center",
         gap: 12,
         padding: 20,
-        backgroundColor: bgColor,
+        backgroundColor: COLORS.background,
       }}
     >
-      <Text style={{ color: textColor, fontSize: 24, textAlign: "center" }}>
+      <Text style={{ color: COLORS.text, fontSize: 24, textAlign: "center" }}>
         Index.tsx
       </Text>
       <Button title="Ready to Work" onPress={() => router.push("/upload-pdf")} />

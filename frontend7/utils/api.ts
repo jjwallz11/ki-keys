@@ -1,10 +1,6 @@
-// frontend6/utils/api.ts
+// utils/api.ts
 import { getToken } from "./auth";
-
-const BASE_URL =
-  process.env.NODE_ENV === "development"
-    ? "http://192.168.1.89:2911"
-    : "https://your-production-url.com"; // replace later
+import { API_BASE_URL } from "@/config/env";
 
 export async function apiFetch(path: string, options: RequestInit = {}) {
   const token = await getToken();
@@ -15,7 +11,7 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
     ...(options.headers || {}),
   };
 
-  const res = await fetch(`${BASE_URL}${path}`, {
+  const res = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
     headers,
   });

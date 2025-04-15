@@ -1,6 +1,8 @@
+// frontend/app/profile.tsx
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, ActivityIndicator } from "react-native";
-import { useThemeColor } from "@/hooks/useThemeColor";
+import { View, Text, Button, ActivityIndicator, StyleSheet } from "react-native";
+import { COLORS } from "@/constants/Colors";
+import Layout from "@/components/Layout";
 import { apiFetch } from "@/utils/api";
 import { logout } from "@/utils/logout";
 
@@ -15,8 +17,6 @@ type User = {
 export default function ProfileScreen() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const textColor = useThemeColor({}, "text");
-  const bgColor = useThemeColor({}, "background");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -33,28 +33,29 @@ export default function ProfileScreen() {
     fetchUser();
   }, []);
 
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: bgColor }}>
-        <ActivityIndicator />
-      </View>
-    );
-  }
-
-  if (!user) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: bgColor }}>
-        <Text style={{ color: textColor }}>Failed to load user data</Text>
-      </View>
-    );
-  }
-
   return (
-    <View style={{ flex: 1, padding: 20, backgroundColor: bgColor }}>
-      <Button title="Logout" onPress={logout} />
-      <Text style={{ color: textColor, marginTop: 20 }}>Name: {user.first_name} {user.last_name}</Text>
-      <Text style={{ color: textColor }}>Email: {user.email}</Text>
-      <Text style={{ color: textColor }}>Role: {user.role}</Text>
-    </View>
+    <Layout>
+      <View style={[styles.container, { backgroundColor: COLORS.background }]}>
+        {loading ? (
+          <ActivityIndicator />
+        ) : user ? (
+          <>
+            <Button title="Logout" onPress={logout} />
+            <Text style={[styles.text, { marginTop: 20 }]}>
+              Name: {user.first_name} {user.last_name}
+            </Text>
+            <Text style={styles.text}>Email: {user.email}</Text>
+            <Text style={styles.text}>Role: {user.role}</Text>
+          </>
+        ) : (
+          <Text style={styles.text}>Failed to load user data</Text>
+        )}
+      </View>
+    </Layout>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 20 },
+  text: { color: COLORS.text },
+});

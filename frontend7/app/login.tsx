@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Text, TextInput, Button, Alert } from "react-native";
 import { useRouter } from "expo-router";
 
-import { useThemeColor } from "@/hooks/useThemeColor";
+import { COLORS } from "@/constants/Colors";
 import { setToken } from "@/utils/auth";
 import { apiFetch } from "@/utils/api";
 import LogoOnlyLayout from "@/components/LogoOnlyLayout";
@@ -13,9 +13,6 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-
-  const textColor = useThemeColor({}, "text");
-  const bgColor = useThemeColor({}, "background");
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -43,7 +40,7 @@ export default function LoginScreen() {
 
   return (
     <LogoOnlyLayout>
-      <Text style={{ color: textColor, fontSize: 18, marginBottom: 10 }}>
+      <Text style={{ color: COLORS.text, fontSize: 18, marginBottom: 10 }}>
         Login
       </Text>
 

@@ -1,1 +1,5 @@
-export { useColorScheme } from 'react-native';
+// frontend/hooks/useColorScheme.ts
+// Force light mode always
+export function useColorScheme() {
+    return "light";
+  }

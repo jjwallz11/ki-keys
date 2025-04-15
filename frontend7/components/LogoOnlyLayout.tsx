@@ -6,14 +6,14 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { useThemeColor } from "@/hooks/useThemeColor";
+import { COLORS } from "@/constants/Colors";
 
 type Props = {
   children: React.ReactNode;
 };
 
 export default function LogoOnlyLayout({ children }: Props) {
-  const bgColor = useThemeColor({}, "background");
+  const bgColor = COLORS({}, "background");
 
   return (
     <KeyboardAvoidingView
