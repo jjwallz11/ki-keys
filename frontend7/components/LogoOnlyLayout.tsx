@@ -13,11 +13,10 @@ type Props = {
 };
 
 export default function LogoOnlyLayout({ children }: Props) {
-  const bgColor = COLORS({}, "background");
 
   return (
     <KeyboardAvoidingView
-      style={[styles.container, { backgroundColor: bgColor }]}
+      style={[styles.container, { backgroundColor: COLORS.background }]}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <View style={styles.modal}>
