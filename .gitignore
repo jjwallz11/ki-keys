@@ -36,6 +36,12 @@ ios/build/
 ios/Pods/
 ios/*.xcworkspace
 ios/xcuserdata/
+# Avoid committing duplicate/cached iOS workspace or extra env files
+ios/frontend7 2.xcodeproj/
+ios/frontend7 2/
+ios/Pods 2/
+ios/.xcode 2.env
+ios/.xcode.env 2.local
 
 # Bundle artifacts
 *.jsbundle
