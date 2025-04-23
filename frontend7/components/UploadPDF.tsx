@@ -13,8 +13,6 @@ export default function UploadPDF() {
   const [parsedData, setParsedData] = useState<{ key_type: string; quantity: number }[] | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const textColor = COLORS({}, "text");
-
   const handlePickDocument = async () => {
     const result = await DocumentPicker.getDocumentAsync({
       type: "application/pdf",
@@ -79,13 +77,13 @@ export default function UploadPDF() {
       {!parsedData ? (
         <>
           <Button title="Select PDF" onPress={handlePickDocument} />
-          {loading && <Text style={{ color: textColor }}>Uploading...</Text>}
+          {loading && <Text style={{ color: COLORS.text }}>Uploading...</Text>}
         </>
       ) : (
         <>
-          <Text style={{ color: textColor, marginBottom: 10 }}>📄 Confirm Extracted Keys:</Text>
+          <Text style={{ color: COLORS.text, marginBottom: 10 }}>📄 Confirm Extracted Keys:</Text>
           {parsedData.map((item, index) => (
-            <Text key={index} style={{ color: textColor }}>
+            <Text key={index} style={{ color: COLORS.text }}>
               {item.quantity} × {item.key_type}
             </Text>
           ))}

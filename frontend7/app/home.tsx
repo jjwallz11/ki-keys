@@ -6,7 +6,7 @@ import Layout from "@/components/Layout";
 const tiles = [
   { label: "Inventory", emoji: "🔑 📄 💍", route: "/inventory" },
   { label: "Invoices", emoji: "📄📄📄", route: "/invoices" },
-  { label: "Keys", emoji: "🔑🔑🔑", route: "/upload-pdf" },
+  { label: "Add Keys", emoji: "🔑🔑🔑", route: "/upload-pdf" },
   { label: "Vin Scan", emoji: "🚗🚙🚐", route: "/vinScan" },
   { label: "Companies", emoji: "🧑🏽‍💼🏢🚚", route: "/companies" },
   { label: "Profile", emoji: "👤", route: "/profile" },

@@ -9,6 +9,7 @@ const navLinks = [
   { title: "Home", route: "/home" },
   { title: "Inventory", route: "/inventory" },
   { title: "Invoices", route: "/invoices" },
+  { title: "Add Keys", route: "/upload-pdf"},
   { title: "Vin Scan", route: "/vinScan" },
   { title: "Companies", route: "/companies" },
 ] as const;
