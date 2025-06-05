@@ -75,5 +75,7 @@
     <string>Automatic</string>
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
+    <key>NSCameraUsageDescription</key>
+    <string>This app needs camera access for OCR VIN scanning</string>
   </dict>
 </plist>
