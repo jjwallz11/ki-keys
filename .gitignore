@@ -8,7 +8,7 @@ build
 # OSX
 #
 .DS_Store
-frontend8/.gitignore
+.gitignore
 
 # Xcode
 #
