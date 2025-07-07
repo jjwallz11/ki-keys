@@ -6,7 +6,10 @@
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
-    "ios": "expo run:ios",
+    "ios": "npm run ios:clean && expo run:ios",
+    "ios:clean": "rm -rf ios/build && rm -rf ios/DerivedData && cd ios && xcodebuild clean && cd ..",
+    "ios:prebuild": "expo prebuild --platform ios --clean",
+    "ios:full-clean": "npm run ios:prebuild && npm run ios:clean && expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint"
   },
